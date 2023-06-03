@@ -1,3 +1,5 @@
+package pachinko;
+
 public class VirtualWallet {
     private int balance;
 
