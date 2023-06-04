@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -61,17 +62,19 @@ public class ProductContainer {
         return availablePrizes.get(randomIndex);
     }
 
-    private List<Product> getAvailableProductsByGrade(String grade, LocalDateTime dateTime) {
+    private List<Product> getAvailableProductsByGrade(String grade, LocalDateTime drawDateTime) {
         List<Product> avaliableProductList = new ArrayList<>();
-        int compareResult;
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+        LocalDateTime expirationDate;
 
         for(Product p : productList){
-            compareResult = dateTime.compareTo(LocalDateTime.parse(p.getExpirationDate()));
+            expirationDate = LocalDateTime.from(formatter.parse(p.getExpirationDate()));
 
-            if (p.getGrade().equals("A") && compareResult <= 0) { // 0(equal), -1(before expirationDate)
+            if(p.getGrade().equals("A") && expirationDate.isAfter(drawDateTime)) {
                 avaliableProductList.add(p);
                 continue;
             }
+
             avaliableProductList.add(p);
         }
 
