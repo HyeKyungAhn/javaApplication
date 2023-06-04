@@ -15,7 +15,7 @@ public class ProductContainer {
 
     ProductContainer(){
         productList = new HashSet<>();
-        String filePath = System.getProperty("user.dir") + "\\src\\pachinko\\productSource.txt";
+        String filePath = System.getProperty("user.dir") + "\\resources\\productSource.txt";
         setProductList(generateProductList(filePath));
     }
 
