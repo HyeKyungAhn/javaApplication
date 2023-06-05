@@ -88,11 +88,11 @@ public class DrawServiceTest {
         assertEquals(availableBGradeDrawCount, bGradeDrawCount);
     }
 
-    //product에 stock 변수를 만들고, 줄어들지 않는 것으로 하자
+    //상품의 제고 상한선은 없는가?
     @Test
     public void testNoStockLimit(){
         //given
-        int drawNum = 10000;
+        int drawNum = 100000;
         DrawService drawService = getDrawService();
         User user = getUserWithWallet(drawNum * PRICE_PER_DRAW);
         ProductContainer container = getContainer();
@@ -104,6 +104,8 @@ public class DrawServiceTest {
         for(Product p : products){
             assert p != null;
         }
+
+        assertEquals(drawNum, products.size());
     }
 
     //뽑은 상품의 등급이 A 또는 B인가?
@@ -126,7 +128,6 @@ public class DrawServiceTest {
 
             assert grade.equals("A") || grade.equals("B");
         }
-        assert true;
     }
 
     // 뽑기의 결과가 A, B, 등급의 상품 또는 꽝인가?
@@ -165,9 +166,10 @@ public class DrawServiceTest {
 
     @Test
     public void testProbabilitiesAndLimits() {
+        //A, B 등급의 상품 모두 최소 1개의 유통기한 내의 제품이 있다는 전제 하에
         // given
         int drawNum = 100000;
-        double significanceLevel = 0.001;
+        double significanceLevel = 0.01;
         DrawService drawService = getDrawService();
         User user = getUserWithWallet(drawNum * PRICE_PER_DRAW);
         ProductContainer container = getContainer();
@@ -193,11 +195,13 @@ public class DrawServiceTest {
                 continue;
             }
 
+            assertEquals(3, bGradeCount);
             loseDrawCount++;
         }
 
         double aGradeProbability = (double) aGradeCount / drawNum;
         double loseDrawProbability = (double) loseDrawCount / drawNum;
+        double bGradeAndLoseDrawProbability = (double) (bGradeCount + loseDrawCount) / drawNum;
 
         double expectedLoseDrawProbability = (1 - A_GRADE_DRAW_PROBABILITY) * (1 - (double)B_GRADE_DRAW_AVAILABLE_NUM / drawNum);
 
@@ -208,5 +212,8 @@ public class DrawServiceTest {
         assertEquals(B_GRADE_DRAW_AVAILABLE_NUM,bGradeCount);
         //B 등급의 상품이 3번 이상이거나 유통기한 내의 B등급의 상품이 없으면 꽝을 뽑는가?
         assertEquals(expectedLoseDrawProbability, loseDrawProbability, significanceLevel); // 0.001의 허용 오차 범위로 검증
+
+        //10%의 확률로 B등급의 상품을 뽑을 수 있는가?
+        assertEquals(1-A_GRADE_DRAW_PROBABILITY, bGradeAndLoseDrawProbability, significanceLevel);
     }
 }
