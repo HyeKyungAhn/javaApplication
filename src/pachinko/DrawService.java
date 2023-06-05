@@ -36,7 +36,7 @@ public class DrawService {
                 temp = null;
             }
 
-            earnedProducts.add(Objects.requireNonNullElseGet(temp, () -> new Product("꽝", "", "")));
+            earnedProducts.add(Objects.requireNonNullElseGet(temp, () -> new Product("", "", "")));
         }
 
         user.setbGradeDrawCount(drawBGradeCount);
