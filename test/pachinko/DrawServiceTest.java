@@ -1,6 +1,5 @@
 package pachinko;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import java.time.LocalDateTime;
@@ -10,6 +9,9 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 public class DrawServiceTest {
+    static final int PRICE_PER_DRAW = 100;
+    static final int B_GRADE_DRAW_AVAILABLE_NUM = 3;
+    static final double A_GRADE_DRAW_PROBABILITY = 0.9;
 
     private DrawService getDrawService(){
         return new DrawService();
@@ -24,54 +26,57 @@ public class DrawServiceTest {
     }
 
     @Test
-    public void testNotEnoughMoneyDontDraw(){
+    public void testDrawNotPossibleWithoutSufficientBalance(){
         //given
+        int drawNum = 15;
+        int balance = 1000; // not enough to draw
         DrawService drawService = getDrawService();
-        User user = getUserWithWallet(1000);
+        User user = getUserWithWallet(balance);
         ProductContainer container = getContainer();
 
         //when
-        List<Product> drawResult = drawService.draw(15, LocalDateTime.now(), container, user);
+        List<Product> drawResult = drawService.draw(drawNum, LocalDateTime.now(), container, user);
+
         //then
         assertNull(drawResult);
     }
 
     @Test
-    public void testDontDrawExpiredProduct(){
+    public void testExpiredProductsNotIncludedInDrawResult(){
         //given
+        int drawNum = 10000;
         DrawService drawService = getDrawService();
-        User user = getUserWithWallet(1000000);
+        User user = getUserWithWallet(drawNum * PRICE_PER_DRAW);
         ProductContainer container = getContainer();
+
         DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
-        boolean isExpiredProductExist = false;
-        LocalDateTime dateTime;
+        LocalDateTime expirationDate;
+        LocalDateTime drawDateTime = LocalDateTime.now();
 
         //when
-        List<Product> drawResult = drawService.draw(10000, LocalDateTime.now(), container, user);
+        List<Product> drawResult = drawService.draw(drawNum, drawDateTime, container, user);
 
         //then
         for(Product p : drawResult){
-            dateTime = LocalDateTime.from(formatter.parse(p.getExpirationDate()));
-            if(dateTime.isBefore(LocalDateTime.now())){
-                isExpiredProductExist = true;
-            }
+            if(p.getExpirationDate().equals("")) continue;
+            expirationDate = LocalDateTime.from(formatter.parse(p.getExpirationDate()));
+            assertFalse("Expired products are included in the draw result", expirationDate.isBefore(drawDateTime));
         }
-
-        assertFalse(isExpiredProductExist);
     }
 
     @Test
-    public void testBGradeProductDrawCount(){
+    public void testBGradeProductDrawCountNotOver3(){
         //given
+        int drawNum = 10000;
         DrawService drawService = getDrawService();
-        User user = getUserWithWallet(1000000);
+        User user = getUserWithWallet(drawNum * PRICE_PER_DRAW);
         ProductContainer container = getContainer();
 
         int availableBGradeDrawCount = 3;
         int bGradeDrawCount = 0;
 
         //when
-        List<Product> drawResult = drawService.draw(10000, LocalDateTime.now(), container, user);
+        List<Product> drawResult = drawService.draw(drawNum, LocalDateTime.now(), container, user);
 
         //then
         for(Product p : drawResult){
@@ -83,64 +88,125 @@ public class DrawServiceTest {
         assertEquals(availableBGradeDrawCount, bGradeDrawCount);
     }
 
-    // 뽑기의 결과가 A, B, 등급의 상품 또는 꽝인가?
-    @Test
-    public void testDrawResultKind(){
-        //given
-        DrawService drawService = getDrawService();
-        User user = getUserWithWallet(10000);
-        ProductContainer container = getContainer();
-        String grade;
-        //when
-        List<Product> drawResult = drawService.draw(100, LocalDateTime.now(), container, user);
-
-        //then
-        for(Product p : drawResult){
-            grade = p.getGrade();
-            assertTrue(grade.equals("A") || grade.equals("B") || grade.equals(""));
-        }
-    }
-
+    //product에 stock 변수를 만들고, 줄어들지 않는 것으로 하자
     @Test
     public void testNoStockLimit(){
         //given
-        int balance = 1000000;
+        int drawNum = 10000;
         DrawService drawService = getDrawService();
-        User user = getUserWithWallet(balance);
+        User user = getUserWithWallet(drawNum * PRICE_PER_DRAW);
         ProductContainer container = getContainer();
 
         //when
-        List<Product> products = drawService.draw(balance/10, LocalDateTime.now(), container, user);
+        List<Product> products = drawService.draw(drawNum, LocalDateTime.now(), container, user);
 
         //then
         for(Product p : products){
-            if(p == null){
-                assert false;
-            }
+            assert p != null;
+        }
+    }
+
+    //뽑은 상품의 등급이 A 또는 B인가?
+    @Test
+    public void testGradeOfSelectedProductAOrB(){
+        //given
+        int drawNum = 10000;
+        DrawService drawService = getDrawService();
+        User user = getUserWithWallet(drawNum * PRICE_PER_DRAW);
+        ProductContainer container = getContainer();
+        String grade;
+
+        //when
+        List<Product> products = drawService.draw(drawNum, LocalDateTime.now(), container, user);
+
+        //then
+        for(Product p : products){
+            grade = p.getGrade();
+            if(grade.equals("")) continue;
+
+            assert grade.equals("A") || grade.equals("B");
         }
         assert true;
     }
 
+    // 뽑기의 결과가 A, B, 등급의 상품 또는 꽝인가?
     @Test
-    public void testSelectedProductGrade(){
+    public void testDrawResultHasOnlyThreeDistinctKinds(){
         //given
+        int drawNum = 100;
         DrawService drawService = getDrawService();
-        User user = getUserWithWallet(1000000);
+        User user = getUserWithWallet(drawNum * PRICE_PER_DRAW);
         ProductContainer container = getContainer();
+        int aGradeCount = 0;
+        int bGradeCount = 0;
+        int loseDrawCount = 0;
         String grade;
-        //when
-        List<Product> products = drawService.draw(10000, LocalDateTime.now(), container, user);
 
-        for(Product p : products){
-            grade = p.getGrade();
-            if(!grade.equals("")){ //꽝
-                if(grade.equals("A") || grade.equals("B")){
-                    continue;
+        //when
+        List<Product> drawResult = drawService.draw(100, LocalDateTime.now(), container, user);
+
+        for (Product product : drawResult) {
+            grade = product.getGrade();
+
+            switch (grade) {
+                case "A" -> aGradeCount++;
+                case "B" -> {
+                    bGradeCount++;
+                    assertTrue(bGradeCount <= 3);
                 }
+                case "" ->  //lose draw
+                        loseDrawCount++;
+            }
+        }
+
+        //then
+        assertEquals(drawNum, aGradeCount + bGradeCount + loseDrawCount);
+    }
+
+    @Test
+    public void testProbabilitiesAndLimits() {
+        // given
+        int drawNum = 100000;
+        double significanceLevel = 0.001;
+        DrawService drawService = getDrawService();
+        User user = getUserWithWallet(drawNum * PRICE_PER_DRAW);
+        ProductContainer container = getContainer();
+
+        int aGradeCount = 0;
+        int bGradeCount = 0;
+        int loseDrawCount = 0;
+        String grade;
+
+        // when
+        List<Product> drawResult = drawService.draw(drawNum, LocalDateTime.now(), container, user);
+
+
+        for (Product product : drawResult) {
+            grade = product.getGrade();
+
+            if (grade.equals("A")) {
+                aGradeCount++;
+                continue;
+            } else if (grade.equals("B")) {
+                bGradeCount++;
+                assertTrue(bGradeCount<=3);
                 continue;
             }
-            assert false;
+
+            loseDrawCount++;
         }
-        //then
+
+        double aGradeProbability = (double) aGradeCount / drawNum;
+        double loseDrawProbability = (double) loseDrawCount / drawNum;
+
+        double expectedLoseDrawProbability = (1 - A_GRADE_DRAW_PROBABILITY) * (1 - (double)B_GRADE_DRAW_AVAILABLE_NUM / drawNum);
+
+        // then
+        //90%의 확률로 A등급의 상품이 뽑히는가?
+        assertEquals(A_GRADE_DRAW_PROBABILITY, aGradeProbability, significanceLevel); // 0.001의 허용 오차 범위로 검증
+        //A 등급 상품이 뽑히지 않으면 B상품이 뽑히는가?
+        assertEquals(B_GRADE_DRAW_AVAILABLE_NUM,bGradeCount);
+        //B 등급의 상품이 3번 이상이거나 유통기한 내의 B등급의 상품이 없으면 꽝을 뽑는가?
+        assertEquals(expectedLoseDrawProbability, loseDrawProbability, significanceLevel); // 0.001의 허용 오차 범위로 검증
     }
 }
