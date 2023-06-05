@@ -70,12 +70,9 @@ public class ProductContainer {
         for(Product p : productList){
             expirationDate = LocalDateTime.from(formatter.parse(p.getExpirationDate()));
 
-            if(p.getGrade().equals("A") && expirationDate.isAfter(drawDateTime)) {
+            if(p.getGrade().equals(grade) && expirationDate.isAfter(drawDateTime)) {
                 avaliableProductList.add(p);
-                continue;
             }
-
-            avaliableProductList.add(p);
         }
 
         return avaliableProductList;
