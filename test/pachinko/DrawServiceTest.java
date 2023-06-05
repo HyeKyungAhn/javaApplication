@@ -72,7 +72,6 @@ public class DrawServiceTest {
         User user = getUserWithWallet(drawNum * PRICE_PER_DRAW);
         ProductContainer container = getContainer();
 
-        int availableBGradeDrawCount = 3;
         int bGradeDrawCount = 0;
 
         //when
@@ -85,7 +84,7 @@ public class DrawServiceTest {
             }
         }
 
-        assertEquals(availableBGradeDrawCount, bGradeDrawCount);
+        assertEquals(B_GRADE_DRAW_AVAILABLE_NUM, bGradeDrawCount);
     }
 
     //상품의 제고 상한선은 없는가?
