@@ -121,7 +121,7 @@ public class PachinkoController implements Controller{
         }
 
         System.out.println("""
-                충전할 수 없는 입력 형식이거나, 충전 가능한 범위를 초과하였습니다.
+                충전할 수 없는 입력 형식이거나, 충전 가능한 범위를 초과하였습니다
                 
                 돈 충전입력형식 : DEPOSIT [원하는 충전 액수]
                 - 원하는 충전 액수에는 자연수만 입력 가능합니다.
@@ -137,7 +137,11 @@ public class PachinkoController implements Controller{
                     보유금액 확인 : MONEY
                     뽑기 : DRAW [원하는 뽑기 횟수]
                     돈충전 : DEPOSIT [원하는 충전 액수]
-                    서비스 종료 : q""");
+                    서비스 종료 : q
+                    
+                    - 뽑기 1회에 100이 차감됩니다
+                    - 충전하여 지갑에 보유할 수 있는 총 액수는 21억입니다
+                    """);
         } else if (status == PRINT_WRONG_INPUT) {
             System.out.println("""
                     잘못된 입력입니다. 다시 입력해주세요.
@@ -146,7 +150,11 @@ public class PachinkoController implements Controller{
                     보유금액 확인 : MONEY
                     뽑기 : DRAW [원하는 뽑기 횟수]
                     돈충전 : DEPOSIT [원하는 충전 액수]
-                    서비스 종료 : q""");
+                    서비스 종료 : q
+                    
+                    - 충전하여 지갑에 보유할 수 있는 총 액수는 21억입니다
+                    - 따라서 뽑기 최대 횟수는 2천1백만번 입니다
+                    """);
         }
     }
 }
