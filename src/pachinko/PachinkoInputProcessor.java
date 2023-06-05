@@ -20,24 +20,28 @@ public class PachinkoInputProcessor implements InputProcessor{
 
     @Override
     public boolean verifyInputValue(String input) {
-        return input.matches("^[a-zA-Z0-9\s]{0,20}$");//0~9, a~z, A~Z, space
+        return input.matches("^[a-zA-Z0-9\s]*$");//0~9, a~z, A~Z, space
 
     }
 
     @Override
     public boolean verifyInputForm(String[] inputArr) {
-        boolean result = true;
+        boolean result;
         int inputArrLength = inputArr.length;
 
-        if(inputArrLength == 0){ //only space
-            result = false;
-        } else if(inputArrLength == 1 && inputArr[0].trim().equals("")){ //only enter
-            result = false;
-        } else if(inputArr[0].equals("money")){
-            result = (inputArrLength == 1);
-        } else if (inputArr[0].equals("draw") || inputArr[0].equals("deposit")) {
-            result = (inputArrLength == 2 && isNaturalNumber(inputArr[1]));
-        } else {
+        try {
+            if(inputArrLength == 0){ //only space
+                result = false;
+            } else if(inputArrLength == 1 && inputArr[0].trim().equals("")){ //only enter
+                result = false;
+            } else if(inputArr[0].equals("money")){
+                result = (inputArrLength == 1);
+            } else if (inputArr[0].equals("draw") || inputArr[0].equals("deposit")) {
+                result = (inputArrLength == 2 && isNaturalNumber(inputArr[1]) && isInIntegerLimit(inputArr[1]));
+            } else {
+                result = false;
+            }
+        } catch (Exception e) {
             result = false;
         }
 
@@ -46,5 +50,10 @@ public class PachinkoInputProcessor implements InputProcessor{
 
     private boolean isNaturalNumber(String str) {
         return str.matches("^[1-9]\\d*$");
+    }
+
+    private boolean isInIntegerLimit(String str){
+        long numValue = Long.parseLong(str);
+        return numValue < Integer.MAX_VALUE;
     }
 }
