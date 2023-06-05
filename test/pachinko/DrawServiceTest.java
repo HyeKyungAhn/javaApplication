@@ -87,7 +87,6 @@ public class DrawServiceTest {
         assertEquals(B_GRADE_DRAW_AVAILABLE_NUM, bGradeDrawCount);
     }
 
-    //상품의 제고 상한선은 없는가?
     @Test
     public void testNoStockLimit(){
         //given
@@ -107,7 +106,6 @@ public class DrawServiceTest {
         assertEquals(drawNum, products.size());
     }
 
-    //뽑은 상품의 등급이 A 또는 B인가?
     @Test
     public void testGradeOfSelectedProductAOrB(){
         //given
@@ -129,7 +127,6 @@ public class DrawServiceTest {
         }
     }
 
-    // 뽑기의 결과가 A, B, 등급의 상품 또는 꽝인가?
     @Test
     public void testDrawResultHasOnlyThreeDistinctKinds(){
         //given
