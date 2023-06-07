@@ -1,6 +1,6 @@
 package deptHeadCounter;
 
-public enum DHCStatus {
+public enum DHCServiceStatus {
     SAVE_DEPT_COMPOSITION_SUCCESS,
     FAIL_DEPT_NOT_EXIST,
     FAIL_CHILD_IS_HIGHEST_DEPT,
