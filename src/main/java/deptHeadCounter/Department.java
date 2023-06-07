@@ -1,48 +1,67 @@
 package deptHeadCounter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Department {
-    private String deptCode;
-    private String upperDeptCode;
-    private int headCount;
-    private boolean isHighestDept;
+    private String name;
+    private int count;
+    private Department parent;
+    private List<Department> children = new ArrayList<>();
 
-    public String getDeptCode() {
-        return deptCode;
+    Department(){}
+
+    public Department(String name, int count){
+        this.name = name;
+        this.count = count;
     }
 
-    public void setDeptCode(String deptCode) {
-        this.deptCode = deptCode;
+    public void addChild(Department dept) {
+        if (dept == this) {
+            throw new IllegalArgumentException("Cannot add a node as its own child.");
+        }
+
+        dept.setParent(this);
+        this.children.add(dept);
     }
 
-    public String getUpperDeptCode() {
-        return upperDeptCode;
-    }
-
-    public void setUpperDeptCode(String upperDeptCode) {
-        this.upperDeptCode = upperDeptCode;
-    }
-
-    public int getHeadCount() {
-        return headCount;
-    }
-
-    public boolean setHeadCount(int headCount) {
-        if(isMoreThanThousand(headCount)){
-            this.headCount = headCount;
+    public boolean addChild(String name, int count) {
+        if (isUnderThousand(count)) {
+            this.addChild(new Department(name, count));
             return true;
         }
         return false;
     }
 
-    public boolean isHighestDept() {
-        return isHighestDept;
+    public List<Department> getChildren(){
+        return children;
     }
 
-    public void setHighestDept(boolean highestDept) {
-        isHighestDept = highestDept;
+    private void setParent(Department department) {
+        this.parent = department;
     }
 
-    private boolean isMoreThanThousand(int headCount){
-        return headCount <= 1000;
+    public String getName(){
+        return name;
+    }
+
+    public boolean setCount(int count){
+        if (isUnderThousand(count)) {
+            this.count = count;
+            return true;
+        }
+        return false;
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public Department getParent(){
+        return parent;
+    }
+
+    private boolean isUnderThousand(int count) {
+        return count <= 1000;
     }
 }
