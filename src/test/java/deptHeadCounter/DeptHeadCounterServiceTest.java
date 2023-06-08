@@ -24,15 +24,15 @@ public class DeptHeadCounterServiceTest {
     @Test
     public void testHeadcountRangeBetweenZeroToThousand(){
         //given
-//        String correctInput1 = "dev, 0";
-        String correctInput2 = "dev, 50";
-        String correctInput3 = "dev, 1000";
+        String correctInput1 = "DEV, 0";
+        String correctInput2 = "DEV, 50";
+        String correctInput3 = "DEV, 900";
 
-        String faultyInput1 = "dev, -1";
-        String faultyInput2 = "dev, 50000";
-        String faultyInput3 = "dev, 1001";
+        String faultyInput1 = "DEV, -1";
+        String faultyInput2 = "DEV, 5000000000";
+        String faultyInput3 = "DEV, 1001";
 
-//        String[] processedCorrectInput1 = inputProcessor.processInput(correctInput1);
+        String[] processedCorrectInput1 = inputProcessor.processInput(correctInput1);
         String[] processedCorrectInput2 = inputProcessor.processInput(correctInput2);
         String[] processedCorrectInput3 = inputProcessor.processInput(correctInput3);
 
@@ -41,7 +41,7 @@ public class DeptHeadCounterServiceTest {
         String[] processedFaultyInput3 = inputProcessor.processInput(faultyInput3);
 
         //when
-//        boolean resultCorrectInput1 = dhcService.saveDeptPersonnelInfo(deptContainer, processedCorrectInput1);
+        boolean resultCorrectInput1 = dhcService.saveDeptPersonnelInfo(deptContainer, processedCorrectInput1);
         boolean resultCorrectInput2 = dhcService.saveDeptPersonnelInfo(deptContainer, processedCorrectInput2);
         boolean resultCorrectInput3 = dhcService.saveDeptPersonnelInfo(deptContainer, processedCorrectInput3);
 
@@ -49,7 +49,7 @@ public class DeptHeadCounterServiceTest {
         boolean resultFaultyInput3 = dhcService.saveDeptPersonnelInfo(deptContainer, processedFaultyInput3);
 
         //then
-//        assertTrue(resultCorrectInput1);
+        assertTrue(resultCorrectInput1);
         assertTrue(resultCorrectInput2);
         assertTrue(resultCorrectInput3);
 
@@ -61,8 +61,8 @@ public class DeptHeadCounterServiceTest {
     @Test
     public void testUpdateCountForExistDeptInStructure(){
         //given
-        String correctInput1 = "dev, 10";
-        String correctInput2 = "dev, 50";
+        String correctInput1 = "DEV, 10";
+        String correctInput2 = "DEV, 50";
 
         String[] processedCorrectInput1 = inputProcessor.processInput(correctInput1);
         String[] processedCorrectInput2 = inputProcessor.processInput(correctInput2);
@@ -264,14 +264,6 @@ public class DeptHeadCounterServiceTest {
         assertSame(statusOfRelation5, DHCServiceStatus.SAVE_DEPT_COMPOSITION_SUCCESS);
         assertSame(statusOfRelation6, DHCServiceStatus.SAVE_DEPT_COMPOSITION_SUCCESS);
 
-        //     AA
-        //     |   \
-        //     BB  FF
-        //     | \
-        //     CC DD
-        //        |
-        //        EE
-
         Department ddDept = deptContainer.getDeptIfExist("EE").getParent();
         assertEquals("DD", ddDept.getName());
         Department bbDept1 = ddDept.getParent();
@@ -470,14 +462,6 @@ public class DeptHeadCounterServiceTest {
         assertSame(statusOfRelation6, DHCServiceStatus.SAVE_DEPT_COMPOSITION_SUCCESS);
 
         Map<String, Integer> totalCount = dhcService.calculateTopLevelDeptPersonnelSum(deptContainer);
-
-        //         *
-        //      / |  \
-        //     AA DD FF
-        //     |  |
-        //    BB  EE
-        //    |
-        //   CC
 
         int expexcedAATotalCount = deptContainer.getDeptIfExist("AA").getCount()
                 + deptContainer.getDeptIfExist("BB").getCount()
