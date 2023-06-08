@@ -8,11 +8,14 @@ public class DeptHeadCounterInputProcessor implements InputProcessor{
 
     @Override
     public String[] processInput(String input) {
+        input = input.toUpperCase(Locale.ROOT);
+
         String[] dividedInput = divideInput(input);
 
         if(verifyInputValue(input) && verifyInputForm(dividedInput)){
             return dividedInput;
         }
+
         return null;
     }
 
@@ -23,7 +26,7 @@ public class DeptHeadCounterInputProcessor implements InputProcessor{
         int idx = 0;
 
         while (tokenizer.hasMoreTokens()) {
-            dividedInput[idx] = tokenizer.nextToken();
+            dividedInput[idx] = tokenizer.nextToken().trim();
             idx++;
         }
 
@@ -32,35 +35,46 @@ public class DeptHeadCounterInputProcessor implements InputProcessor{
 
     @Override
     public boolean verifyInputValue(String input) {
-        return input.matches("^[a-zA-Z*]{1,10}\\s*[,<>]\\s*[a-zA-Z0-9*]{1,10}$");//0~9, a~z, A~Z, *, <, >, ',', space;
+        return input.matches("^[A-Z*]{1,10}\\s*[,<>]\\s*[A-Z0-9*]{1,10}$");//0~9, a~z, A~Z, *, <, >, ',', space;
     }
 
     @Override
     public boolean verifyInputForm(String[] inputArr) {
-        Arrays.stream(inputArr).forEach(i -> i = i.trim());
-        boolean result = true;
+        boolean result = false;
         String verifier = inputArr[1];
+        String parentDept;
+        String childDept;
 
         if (inputArr.length != 3) {
             return false;
         }
 
-        if(verifier.equals(",")){
-            if(inputArr[0].matches("^[^a-zA-Z]{1,10}$")){
-                result = false;
-            } else if (inputArr[2].matches("^[^0-9]{1,10}$")) {
-                result = false;
-            }
-        } else if(verifier.equals("<") && inputArr[0].contains("^[^0-9]{1,10}$")){
-            result = false;
-        } else if(verifier.equals(">") && inputArr[2].contains("*")){
-            result = false;
+        if(verifier.equals(",")
+                && isCapitalAlphabet(inputArr[0])
+                && isNaturalNumber(inputArr[2])){
+            result = true;
+        }
+
+        if(verifier.equals("<") || verifier.equals(">")){
+            parentDept = verifier.equals("<") ? inputArr[2] : inputArr[0];
+            childDept = verifier.equals("<") ? inputArr[0] : inputArr[2];
+
+            if(isCapitalAlphabetOrAsterisk(parentDept)
+                    && isCapitalAlphabet(childDept)) result = true;
         }
 
         return result;
     }
 
     private boolean isNaturalNumber(String str){
-        return str.matches("^[1-9]\\d*$");
+        return str.matches("^[1-9]\\d{1,10}$");
+    }
+
+    private boolean isCapitalAlphabet(String str){
+        return str.matches("^[A-Z]{1,10}$");
+    }
+
+    private boolean isCapitalAlphabetOrAsterisk(String str){
+        return str.matches("^\\*$|^[A-Z]{1,10}$");
     }
 }
