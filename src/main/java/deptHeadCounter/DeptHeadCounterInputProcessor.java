@@ -8,8 +8,6 @@ public class DeptHeadCounterInputProcessor implements InputProcessor{
 
     @Override
     public String[] processInput(String input) {
-        input = input.toUpperCase(Locale.ROOT);
-
         String[] dividedInput = divideInput(input);
 
         if(verifyInputValue(input) && verifyInputForm(dividedInput)){
@@ -20,7 +18,7 @@ public class DeptHeadCounterInputProcessor implements InputProcessor{
     }
 
     @Override
-    public String[] divideInput(String input) {//,<>가 없으면?
+    public String[] divideInput(String input) {
         StringTokenizer tokenizer = new StringTokenizer(input, ",<>", true);
         String[] dividedInput = new String[tokenizer.countTokens()];
         int idx = 0;
@@ -35,7 +33,7 @@ public class DeptHeadCounterInputProcessor implements InputProcessor{
 
     @Override
     public boolean verifyInputValue(String input) {
-        return input.matches("^[A-Z*]{1,10}\\s*[,<>]\\s*[A-Z0-9*]{1,10}$");//0~9, a~z, A~Z, *, <, >, ',', space;
+        return input.matches("^[A-Z*]{1,10}\\s*[,<>]\\s*[A-Z0-9*]{1,9}$");//0~9, a~z, A~Z, *, <, >, ',', space;
     }
 
     @Override
@@ -67,14 +65,14 @@ public class DeptHeadCounterInputProcessor implements InputProcessor{
     }
 
     private boolean isNaturalNumber(String str){
-        return str.matches("^[1-9]\\d{1,10}$");
+        return str.matches("^0+$|^[1-9]\\d*$");
     }
 
     private boolean isCapitalAlphabet(String str){
-        return str.matches("^[A-Z]{1,10}$");
+        return str.matches("^[A-Z]{1,9}$");
     }
 
     private boolean isCapitalAlphabetOrAsterisk(String str){
-        return str.matches("^\\*$|^[A-Z]{1,10}$");
+        return str.matches("^\\*$|^[A-Z]{1,9}$");
     }
 }
