@@ -33,12 +33,12 @@ public class DeptHeadCounterService {
         }
 
         if (!parentDept.getName().equals("*")
-                && (parentDept.getParent() == null || parentDept.getParent().getName().equals("unassigned"))) {
+                && (parentDept.getParent() == null || isUnassignedDept(parentDept.getParent()))) {
             return DHCServiceStatus.FAIL_PARENT_NOT_ASSIGNED; //상위부서가 트리구조 내에 있어야한다.
         }
 
 
-        if (childDept.getParent() != null && !childDept.getParent().getName().equals("unassigned")) {
+        if (childDept.getParent() != null && !isUnassignedDept(childDept.getParent())) {
             return DHCServiceStatus.FAIL_ALREADY_HAVE_PARENT; //이미 상위부서가 있다.
         }
 
@@ -51,8 +51,15 @@ public class DeptHeadCounterService {
     public Map<String, Integer> calculateTopLevelDeptPersonnelSum(DepartmentContainer container){
         Map<String, Integer> result = new HashMap<>();
         for (Department highestDept : container.getRoot().getChildren()) {
+
+            if(isUnassignedDept(highestDept)) continue;
+
             result.put(highestDept.getName(), container.getTotalHeadCount(highestDept));
         }
         return result;
+    }
+
+    private boolean isUnassignedDept(Department dept) {
+        return dept.getName().equals(NODE_NAME_STORE_UNASSIGNED_DEPT);
     }
 }
