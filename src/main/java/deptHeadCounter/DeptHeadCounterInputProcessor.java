@@ -59,4 +59,8 @@ public class DeptHeadCounterInputProcessor implements InputProcessor{
 
         return result;
     }
+
+    private boolean isNaturalNumber(String str){
+        return str.matches("^[1-9]\\d*$");
+    }
 }
