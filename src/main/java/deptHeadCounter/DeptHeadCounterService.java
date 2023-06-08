@@ -8,7 +8,7 @@ public class DeptHeadCounterService {
 
     public boolean saveDeptPersonnelInfo(DepartmentContainer container, String[] input){
         String deptName = input[0];
-        int count = Integer.parseInt(input[1]);
+        int count = Integer.parseInt(input[2]);
 
         Department savedDeptInfo = container.getDeptIfExist(deptName);
 
