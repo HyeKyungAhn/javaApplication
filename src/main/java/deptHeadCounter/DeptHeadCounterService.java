@@ -20,7 +20,7 @@ public class DeptHeadCounterService {
         return dept.addChild(deptName, count);
     }
 
-    private DHCServiceStatus updateDeptStructure(DepartmentContainer container, String[] inputs){
+    public DHCServiceStatus updateDeptStructure(DepartmentContainer container, String[] inputs){
         String operation = inputs[1];
         String parentName = operation.equals("<") ? inputs[2] : inputs[0];
         String childName = operation.equals("<") ? inputs[0] : inputs[2];
@@ -48,7 +48,7 @@ public class DeptHeadCounterService {
         return DHCServiceStatus.SAVE_DEPT_COMPOSITION_SUCCESS;
     }
 
-    private Map<String, Integer> calculateTopLevelDeptPersonnelSum(DepartmentContainer container){
+    public Map<String, Integer> calculateTopLevelDeptPersonnelSum(DepartmentContainer container){
         Map<String, Integer> result = new HashMap<>();
         for (Department highestDept : container.getRoot().getChildren()) {
             result.put(highestDept.getName(), container.getTotalHeadCount(highestDept));
