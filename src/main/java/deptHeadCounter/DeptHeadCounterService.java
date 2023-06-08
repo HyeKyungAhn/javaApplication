@@ -7,8 +7,15 @@ public class DeptHeadCounterService {
     public static final String NODE_NAME_STORE_UNASSIGNED_DEPT = "unassigned";
 
     public boolean saveDeptPersonnelInfo(DepartmentContainer container, String[] input){
-        String deptName = input[0];
-        int count = Integer.parseInt(input[2]);
+        String deptName;
+        int count = 0;
+
+        try {
+            deptName = input[0];
+            count = Integer.parseInt(input[2]);
+        } catch (NumberFormatException | NullPointerException e) {
+            return false;
+        }
 
         Department savedDeptInfo = container.getDeptIfExist(deptName);
 
