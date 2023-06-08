@@ -3,7 +3,6 @@ package deptHeadCounter;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.*;
@@ -24,6 +23,8 @@ public class DeptHeadCounterServiceTest {
     @Test
     public void testHeadcountRangeBetweenZeroToThousand(){
         //given
+        deptContainer.init();
+
         String correctInput1 = "DEV, 0";
         String correctInput2 = "DEV, 50";
         String correctInput3 = "DEV, 900";
@@ -61,6 +62,7 @@ public class DeptHeadCounterServiceTest {
     @Test
     public void testUpdateCountForExistDeptInStructure(){
         //given
+        deptContainer.init();
         String correctInput1 = "DEV, 10";
         String correctInput2 = "DEV, 50";
 
@@ -84,7 +86,7 @@ public class DeptHeadCounterServiceTest {
     @Test
     public void testUpdateFailsForUnsavedDeptInfo(){
         //given
-        DepartmentContainer deptContainer = new DepartmentContainer();
+        deptContainer.init();
 
         String relation = "AA > BB";
         String[] processedRelation = inputProcessor.processInput(relation);
@@ -99,6 +101,8 @@ public class DeptHeadCounterServiceTest {
     @Test
     public void testUpdateFailsForUnassignedParentDept(){
         //given
+        deptContainer.init();
+
         String devDeptInput = "DEV, 100";
         String hrDeptInput = "HR, 50";
         String relation = "DEV > HR";
@@ -122,7 +126,7 @@ public class DeptHeadCounterServiceTest {
     @Test
     public void testOnlySingleParentAvailable(){
         //given
-        DepartmentContainer deptContainer = new DepartmentContainer();
+        deptContainer.init();
 
         String aaDeptInput = "AA, 10";
         String bbDeptInput = "BB, 50";
@@ -195,7 +199,7 @@ public class DeptHeadCounterServiceTest {
     @Test
     public void testDepartmentHierarchyCorrectness(){
         //given
-        DepartmentContainer deptContainer = new DepartmentContainer();
+        deptContainer.init();
         //     AA
         //     |   \
         //     BB  FF
@@ -278,7 +282,7 @@ public class DeptHeadCounterServiceTest {
     @Test
     public void testTotalHeadcountInTopLevelDepts(){
         //given
-        DepartmentContainer deptContainer = new DepartmentContainer();
+        deptContainer.init();
         //     AA
         //     |   \
         //     BB  FF
@@ -362,7 +366,7 @@ public class DeptHeadCounterServiceTest {
     @Test
     public void testTotalHeadcountForOnlyOneTopLevelDept(){
         //given
-        DepartmentContainer deptContainer = new DepartmentContainer();
+        deptContainer.init();
 
         String aaDeptInput = "AA, 10";
 
@@ -392,7 +396,7 @@ public class DeptHeadCounterServiceTest {
     @Test
     public void testNoOverlapInTotalHeadcountByTopLevelDepts(){
         //given
-        DepartmentContainer deptContainer = new DepartmentContainer();
+        deptContainer.init();
         //         *
         //      / |  \
         //     AA DD FF
@@ -480,7 +484,7 @@ public class DeptHeadCounterServiceTest {
     @Test
     public void testNullIfNoDeptInStructure(){
         //given
-        DepartmentContainer deptContainer = new DepartmentContainer();
+        deptContainer.init();
 
         Map<String, Integer> totalCount = dhcService.calculateTopLevelDeptPersonnelSum(deptContainer);
 
