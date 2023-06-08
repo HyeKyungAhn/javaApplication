@@ -8,8 +8,6 @@ public class DeptHeadCounterInputProcessor implements InputProcessor{
 
     @Override
     public String[] processInput(String input) {
-        input = input.toUpperCase(Locale.ROOT);
-
         String[] dividedInput = divideInput(input);
 
         if(verifyInputValue(input) && verifyInputForm(dividedInput)){
@@ -20,7 +18,7 @@ public class DeptHeadCounterInputProcessor implements InputProcessor{
     }
 
     @Override
-    public String[] divideInput(String input) {//,<>가 없으면?
+    public String[] divideInput(String input) {
         StringTokenizer tokenizer = new StringTokenizer(input, ",<>", true);
         String[] dividedInput = new String[tokenizer.countTokens()];
         int idx = 0;
