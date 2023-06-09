@@ -19,7 +19,13 @@ public class DeptHeadCounterServiceTest {
         inputProcessor = new DeptHeadCounterInputProcessor();
     }
 
+    private DHCOutputStatus getResultFromSavePersonnelInfo(String[] input){
+        return (DHCOutputStatus) dhcService.saveDeptPersonnelInfo(deptContainer, input).get("saveResult");
+    }
 
+    private DHCOutputStatus getResultFromUpdateDeptStructure(String[] input){
+        return (DHCOutputStatus) dhcService.updateDeptStructure(deptContainer, input).get("updateResult");
+    }
     @Test
     public void testHeadcountRangeBetweenZeroToThousand(){
         //given
@@ -42,22 +48,24 @@ public class DeptHeadCounterServiceTest {
         String[] processedFaultyInput3 = inputProcessor.processInput(faultyInput3);
 
         //when
-        boolean resultCorrectInput1 = dhcService.saveDeptPersonnelInfo(deptContainer, processedCorrectInput1);
-        boolean resultCorrectInput2 = dhcService.saveDeptPersonnelInfo(deptContainer, processedCorrectInput2);
-        boolean resultCorrectInput3 = dhcService.saveDeptPersonnelInfo(deptContainer, processedCorrectInput3);
+        DHCOutputStatus resultCorrectInput1 = getResultFromSavePersonnelInfo(processedCorrectInput1);
+        DHCOutputStatus resultCorrectInput2 = getResultFromSavePersonnelInfo(processedCorrectInput2);
+        DHCOutputStatus resultCorrectInput3 = getResultFromSavePersonnelInfo(processedCorrectInput3);
 
-        boolean resultFaultyInput2 = dhcService.saveDeptPersonnelInfo(deptContainer, processedFaultyInput2);
-        boolean resultFaultyInput3 = dhcService.saveDeptPersonnelInfo(deptContainer, processedFaultyInput3);
+        DHCOutputStatus resultFaultyInput2 = getResultFromSavePersonnelInfo(processedFaultyInput2);
+        DHCOutputStatus resultFaultyInput3 = getResultFromSavePersonnelInfo(processedFaultyInput3);
 
         //then
-        assertTrue(resultCorrectInput1);
-        assertTrue(resultCorrectInput2);
-        assertTrue(resultCorrectInput3);
+        assertEquals(resultCorrectInput1, DHCOutputStatus.SAVE_PERSONNEL_INFO_SUCCESS);
+        assertEquals(resultCorrectInput2, DHCOutputStatus.SAVE_PERSONNEL_INFO_SUCCESS);
+        assertEquals(resultCorrectInput3, DHCOutputStatus.SAVE_PERSONNEL_INFO_SUCCESS);
 
         assertNull(processedFaultyInput1); //입력값 검증 단계에서 음수가 걸러짐
-        assertFalse(resultFaultyInput2);
-        assertFalse(resultFaultyInput3);
+        assertEquals(resultFaultyInput2, DHCOutputStatus.SAVE_PERSONNEL_INFO_FAIL);
+        assertEquals(resultFaultyInput3, DHCOutputStatus.SAVE_PERSONNEL_INFO_FAIL);
     }
+    
+
 
     @Test
     public void testUpdateCountForExistDeptInStructure(){
@@ -70,14 +78,15 @@ public class DeptHeadCounterServiceTest {
         String[] processedCorrectInput2 = inputProcessor.processInput(correctInput2);
 
         //when
-        boolean resultCorrectInput1 = dhcService.saveDeptPersonnelInfo(deptContainer, processedCorrectInput1);
+        DHCOutputStatus resultCorrectInput1 = getResultFromSavePersonnelInfo(processedCorrectInput1);
         int devDeptCount1 = deptContainer.getDeptIfExist("DEV").getCount();
-        boolean resultCorrectInput2 = dhcService.saveDeptPersonnelInfo(deptContainer, processedCorrectInput2);
+
+        DHCOutputStatus resultCorrectInput2 = getResultFromSavePersonnelInfo(processedCorrectInput2);
         int devDeptCount2 = deptContainer.getDeptIfExist("DEV").getCount();
 
         //then
-        assertTrue(resultCorrectInput1);
-        assertTrue(resultCorrectInput2);
+        assertEquals(resultCorrectInput1, DHCOutputStatus.SAVE_PERSONNEL_INFO_SUCCESS);
+        assertEquals(resultCorrectInput2, DHCOutputStatus.SAVE_PERSONNEL_INFO_SUCCESS);
         assertEquals(10, devDeptCount1);
         assertEquals(50, devDeptCount2);
     }
@@ -92,10 +101,10 @@ public class DeptHeadCounterServiceTest {
         String[] processedRelation = inputProcessor.processInput(relation);
 
         //when
-        DHCServiceStatus status= dhcService.updateDeptStructure(deptContainer, processedRelation);
+        DHCOutputStatus status = getResultFromUpdateDeptStructure(processedRelation);
 
         //then
-        assertSame(status, DHCServiceStatus.FAIL_DEPT_NOT_EXIST);
+        assertSame(status, DHCOutputStatus.UPDATE_FAIL_DEPT_NOT_EXIST);
     }
 
     @Test
@@ -112,15 +121,15 @@ public class DeptHeadCounterServiceTest {
         String[] processedRelation = inputProcessor.processInput(relation);
 
         //when
-        boolean saveResultOfDevDeptInput = dhcService.saveDeptPersonnelInfo(deptContainer, processedDevDeptInput);
-        boolean saveResultOfDeptInput = dhcService.saveDeptPersonnelInfo(deptContainer, processedHrDeptInput);
+        DHCOutputStatus saveResultOfDevDeptInput = getResultFromSavePersonnelInfo(processedDevDeptInput);
+        DHCOutputStatus saveResultOfHrDeptInput = getResultFromSavePersonnelInfo(processedHrDeptInput);
 
-        DHCServiceStatus status= dhcService.updateDeptStructure(deptContainer, processedRelation);
+        DHCOutputStatus status= getResultFromUpdateDeptStructure(processedRelation);
 
         //then
-        assertTrue(saveResultOfDevDeptInput);
-        assertTrue(saveResultOfDeptInput);
-        assertSame(status, DHCServiceStatus.FAIL_PARENT_NOT_ASSIGNED);
+        assertEquals(saveResultOfDevDeptInput, DHCOutputStatus.SAVE_PERSONNEL_INFO_SUCCESS);
+        assertEquals(saveResultOfHrDeptInput, DHCOutputStatus.SAVE_PERSONNEL_INFO_SUCCESS);
+        assertSame(status, DHCOutputStatus.UPDATE_FAIL_PARENT_NOT_ASSIGNED);
     }
 
     @Test
@@ -147,30 +156,30 @@ public class DeptHeadCounterServiceTest {
         String[] processedfaultRelation = inputProcessor.processInput(faultRelation);
 
         //when
-        boolean saveResultOfAaDeptInput = dhcService.saveDeptPersonnelInfo(deptContainer, processedAaDeptInput);
-        boolean saveResultOfBbDeptInput = dhcService.saveDeptPersonnelInfo(deptContainer, processedBbDeptInput);
-        boolean saveResultOfCcDeptInput = dhcService.saveDeptPersonnelInfo(deptContainer, processedCcDeptInput);
+        DHCOutputStatus saveResultOfAaDeptInput = getResultFromSavePersonnelInfo(processedAaDeptInput);
+        DHCOutputStatus saveResultOfBbDeptInput = getResultFromSavePersonnelInfo(processedBbDeptInput);
+        DHCOutputStatus saveResultOfCcDeptInput = getResultFromSavePersonnelInfo(processedCcDeptInput);
 
-        DHCServiceStatus statusOfCorrectRelation1 = dhcService.updateDeptStructure(deptContainer, processedCorrectRelation1);
-        DHCServiceStatus statusOfCorrectRelation2 = dhcService.updateDeptStructure(deptContainer, processedcorrectRelation2);
-        DHCServiceStatus statusOfCorrectRelation3 = dhcService.updateDeptStructure(deptContainer, processedcorrectRelation3);
-        DHCServiceStatus statusOfFaultRelation = dhcService.updateDeptStructure(deptContainer, processedfaultRelation);
+        DHCOutputStatus statusOfCorrectRelation1 = getResultFromUpdateDeptStructure(processedCorrectRelation1);
+        DHCOutputStatus statusOfCorrectRelation2 = getResultFromUpdateDeptStructure(processedcorrectRelation2);
+        DHCOutputStatus statusOfCorrectRelation3 = getResultFromUpdateDeptStructure(processedcorrectRelation3);
+        DHCOutputStatus statusOfFaultRelation = getResultFromUpdateDeptStructure(processedfaultRelation);
 
         //then
-        assertTrue(saveResultOfAaDeptInput);
-        assertTrue(saveResultOfBbDeptInput);
-        assertTrue(saveResultOfCcDeptInput);
+        assertEquals(saveResultOfAaDeptInput, DHCOutputStatus.SAVE_PERSONNEL_INFO_SUCCESS);
+        assertEquals(saveResultOfBbDeptInput, DHCOutputStatus.SAVE_PERSONNEL_INFO_SUCCESS);
+        assertEquals(saveResultOfCcDeptInput, DHCOutputStatus.SAVE_PERSONNEL_INFO_SUCCESS);
 
-        assertSame(statusOfCorrectRelation1, DHCServiceStatus.SAVE_DEPT_COMPOSITION_SUCCESS);
-        assertSame(statusOfCorrectRelation2, DHCServiceStatus.SAVE_DEPT_COMPOSITION_SUCCESS);
-        assertSame(statusOfCorrectRelation3, DHCServiceStatus.SAVE_DEPT_COMPOSITION_SUCCESS);
-        assertSame(statusOfFaultRelation, DHCServiceStatus.FAIL_ALREADY_HAVE_PARENT);
+        assertSame(statusOfCorrectRelation1, DHCOutputStatus.UPDATE_DEPT_COMPOSITION_SUCCESS);
+        assertSame(statusOfCorrectRelation2, DHCOutputStatus.UPDATE_DEPT_COMPOSITION_SUCCESS);
+        assertSame(statusOfCorrectRelation3, DHCOutputStatus.UPDATE_DEPT_COMPOSITION_SUCCESS);
+        assertSame(statusOfFaultRelation, DHCOutputStatus.UPDATE_FAIL_ALREADY_HAVE_PARENT);
     }
 
     @Test
     public void testUpdateFailForSelfInclusiveDept(){
         //given
-        DepartmentContainer deptContainer = new DepartmentContainer();
+        deptContainer.init();
 
         String aaDeptInput = "AA, 10";
 
@@ -183,16 +192,16 @@ public class DeptHeadCounterServiceTest {
 
 
         //when
-        boolean saveResultOfAaDeptInput = dhcService.saveDeptPersonnelInfo(deptContainer, processedAaDeptInput);
+        DHCOutputStatus saveResultOfAaDeptInput = getResultFromSavePersonnelInfo(processedAaDeptInput);
 
-        DHCServiceStatus statusOfCorrectRelation = dhcService.updateDeptStructure(deptContainer, processedCorrectRelation);
-        DHCServiceStatus statusOfFaultyRelation = dhcService.updateDeptStructure(deptContainer, processedFaultyRelation);
+        DHCOutputStatus statusOfCorrectRelation = getResultFromUpdateDeptStructure(processedCorrectRelation);
+        DHCOutputStatus statusOfFaultyRelation = getResultFromUpdateDeptStructure(processedFaultyRelation);
 
         //then
-        assertTrue(saveResultOfAaDeptInput);
+        assertEquals(saveResultOfAaDeptInput, DHCOutputStatus.SAVE_PERSONNEL_INFO_SUCCESS);
 
-        assertSame(statusOfCorrectRelation, DHCServiceStatus.SAVE_DEPT_COMPOSITION_SUCCESS);
-        assertSame(statusOfFaultyRelation, DHCServiceStatus.FAIL_ALREADY_HAVE_PARENT);
+        assertSame(statusOfCorrectRelation, DHCOutputStatus.UPDATE_DEPT_COMPOSITION_SUCCESS);
+        assertSame(statusOfFaultyRelation, DHCOutputStatus.UPDATE_FAIL_CANNOT_ADD_ITSELF_AS_CHILD);
     }
 
 
@@ -239,34 +248,34 @@ public class DeptHeadCounterServiceTest {
 
 
         //when
-        boolean saveResultOfAaDeptInput = dhcService.saveDeptPersonnelInfo(deptContainer, processedAaDeptInput);
-        boolean saveResultOfBbDeptInput = dhcService.saveDeptPersonnelInfo(deptContainer, processedBbDeptInput);
-        boolean saveResultOfCcDeptInput = dhcService.saveDeptPersonnelInfo(deptContainer, processedCcDeptInput);
-        boolean saveResultOfDdDeptInput = dhcService.saveDeptPersonnelInfo(deptContainer, processedDdDeptInput);
-        boolean saveResultOfEeDeptInput = dhcService.saveDeptPersonnelInfo(deptContainer, processedEeDeptInput);
-        boolean saveResultOfFfDeptInput = dhcService.saveDeptPersonnelInfo(deptContainer, processedFfDeptInput);
+        DHCOutputStatus saveResultOfAaDeptInput = getResultFromSavePersonnelInfo(processedAaDeptInput);
+        DHCOutputStatus saveResultOfBbDeptInput = getResultFromSavePersonnelInfo(processedBbDeptInput);
+        DHCOutputStatus saveResultOfCcDeptInput = getResultFromSavePersonnelInfo(processedCcDeptInput);
+        DHCOutputStatus saveResultOfDdDeptInput = getResultFromSavePersonnelInfo(processedDdDeptInput);
+        DHCOutputStatus saveResultOfEeDeptInput = getResultFromSavePersonnelInfo(processedEeDeptInput);
+        DHCOutputStatus saveResultOfFfDeptInput = getResultFromSavePersonnelInfo(processedFfDeptInput);
 
-        DHCServiceStatus statusOfRelation1 = dhcService.updateDeptStructure(deptContainer, processedRelation1);
-        DHCServiceStatus statusOfRelation2 = dhcService.updateDeptStructure(deptContainer, processedRelation2);
-        DHCServiceStatus statusOfRelation3 = dhcService.updateDeptStructure(deptContainer, processedRelation3);
-        DHCServiceStatus statusOfRelation4 = dhcService.updateDeptStructure(deptContainer, processedRelation4);
-        DHCServiceStatus statusOfRelation5 = dhcService.updateDeptStructure(deptContainer, processedRelation5);
-        DHCServiceStatus statusOfRelation6 = dhcService.updateDeptStructure(deptContainer, processedRelation6);
+        DHCOutputStatus statusOfRelation1 = getResultFromUpdateDeptStructure(processedRelation1);
+        DHCOutputStatus statusOfRelation2 = getResultFromUpdateDeptStructure(processedRelation2);
+        DHCOutputStatus statusOfRelation3 = getResultFromUpdateDeptStructure(processedRelation3);
+        DHCOutputStatus statusOfRelation4 = getResultFromUpdateDeptStructure(processedRelation4);
+        DHCOutputStatus statusOfRelation5 = getResultFromUpdateDeptStructure(processedRelation5);
+        DHCOutputStatus statusOfRelation6 = getResultFromUpdateDeptStructure(processedRelation6);
 
         //then
-        assertTrue(saveResultOfAaDeptInput);
-        assertTrue(saveResultOfBbDeptInput);
-        assertTrue(saveResultOfCcDeptInput);
-        assertTrue(saveResultOfDdDeptInput);
-        assertTrue(saveResultOfEeDeptInput);
-        assertTrue(saveResultOfFfDeptInput);
+        assertEquals(saveResultOfAaDeptInput, DHCOutputStatus.SAVE_PERSONNEL_INFO_SUCCESS);
+        assertEquals(saveResultOfBbDeptInput, DHCOutputStatus.SAVE_PERSONNEL_INFO_SUCCESS);
+        assertEquals(saveResultOfCcDeptInput, DHCOutputStatus.SAVE_PERSONNEL_INFO_SUCCESS);
+        assertEquals(saveResultOfDdDeptInput, DHCOutputStatus.SAVE_PERSONNEL_INFO_SUCCESS);
+        assertEquals(saveResultOfEeDeptInput, DHCOutputStatus.SAVE_PERSONNEL_INFO_SUCCESS);
+        assertEquals(saveResultOfFfDeptInput, DHCOutputStatus.SAVE_PERSONNEL_INFO_SUCCESS);
 
-        assertSame(statusOfRelation1, DHCServiceStatus.SAVE_DEPT_COMPOSITION_SUCCESS);
-        assertSame(statusOfRelation2, DHCServiceStatus.SAVE_DEPT_COMPOSITION_SUCCESS);
-        assertSame(statusOfRelation3, DHCServiceStatus.SAVE_DEPT_COMPOSITION_SUCCESS);
-        assertSame(statusOfRelation4, DHCServiceStatus.SAVE_DEPT_COMPOSITION_SUCCESS);
-        assertSame(statusOfRelation5, DHCServiceStatus.SAVE_DEPT_COMPOSITION_SUCCESS);
-        assertSame(statusOfRelation6, DHCServiceStatus.SAVE_DEPT_COMPOSITION_SUCCESS);
+        assertSame(statusOfRelation1, DHCOutputStatus.UPDATE_DEPT_COMPOSITION_SUCCESS);
+        assertSame(statusOfRelation2, DHCOutputStatus.UPDATE_DEPT_COMPOSITION_SUCCESS);
+        assertSame(statusOfRelation3, DHCOutputStatus.UPDATE_DEPT_COMPOSITION_SUCCESS);
+        assertSame(statusOfRelation4, DHCOutputStatus.UPDATE_DEPT_COMPOSITION_SUCCESS);
+        assertSame(statusOfRelation5, DHCOutputStatus.UPDATE_DEPT_COMPOSITION_SUCCESS);
+        assertSame(statusOfRelation6, DHCOutputStatus.UPDATE_DEPT_COMPOSITION_SUCCESS);
 
         Department ddDept = deptContainer.getDeptIfExist("EE").getParent();
         assertEquals("DD", ddDept.getName());
@@ -322,34 +331,34 @@ public class DeptHeadCounterServiceTest {
 
 
         //when
-        boolean saveResultOfAaDeptInput = dhcService.saveDeptPersonnelInfo(deptContainer, processedAaDeptInput);
-        boolean saveResultOfBbDeptInput = dhcService.saveDeptPersonnelInfo(deptContainer, processedBbDeptInput);
-        boolean saveResultOfCcDeptInput = dhcService.saveDeptPersonnelInfo(deptContainer, processedCcDeptInput);
-        boolean saveResultOfDdDeptInput = dhcService.saveDeptPersonnelInfo(deptContainer, processedDdDeptInput);
-        boolean saveResultOfEeDeptInput = dhcService.saveDeptPersonnelInfo(deptContainer, processedEeDeptInput);
-        boolean saveResultOfFfDeptInput = dhcService.saveDeptPersonnelInfo(deptContainer, processedFfDeptInput);
+        DHCOutputStatus saveResultOfAaDeptInput = getResultFromSavePersonnelInfo(processedAaDeptInput);
+        DHCOutputStatus saveResultOfBbDeptInput = getResultFromSavePersonnelInfo(processedBbDeptInput);
+        DHCOutputStatus saveResultOfCcDeptInput = getResultFromSavePersonnelInfo(processedCcDeptInput);
+        DHCOutputStatus saveResultOfDdDeptInput = getResultFromSavePersonnelInfo(processedDdDeptInput);
+        DHCOutputStatus saveResultOfEeDeptInput = getResultFromSavePersonnelInfo(processedEeDeptInput);
+        DHCOutputStatus saveResultOfFfDeptInput = getResultFromSavePersonnelInfo(processedFfDeptInput);
 
-        DHCServiceStatus statusOfRelation1 = dhcService.updateDeptStructure(deptContainer, processedRelation1);
-        DHCServiceStatus statusOfRelation2 = dhcService.updateDeptStructure(deptContainer, processedRelation2);
-        DHCServiceStatus statusOfRelation3 = dhcService.updateDeptStructure(deptContainer, processedRelation3);
-        DHCServiceStatus statusOfRelation4 = dhcService.updateDeptStructure(deptContainer, processedRelation4);
-        DHCServiceStatus statusOfRelation5 = dhcService.updateDeptStructure(deptContainer, processedRelation5);
-        DHCServiceStatus statusOfRelation6 = dhcService.updateDeptStructure(deptContainer, processedRelation6);
+        DHCOutputStatus statusOfRelation1 = getResultFromUpdateDeptStructure(processedRelation1);
+        DHCOutputStatus statusOfRelation2 = getResultFromUpdateDeptStructure(processedRelation2);
+        DHCOutputStatus statusOfRelation3 = getResultFromUpdateDeptStructure(processedRelation3);
+        DHCOutputStatus statusOfRelation4 = getResultFromUpdateDeptStructure(processedRelation4);
+        DHCOutputStatus statusOfRelation5 = getResultFromUpdateDeptStructure(processedRelation5);
+        DHCOutputStatus statusOfRelation6 = getResultFromUpdateDeptStructure(processedRelation6);
 
         //then
-        assertTrue(saveResultOfAaDeptInput);
-        assertTrue(saveResultOfBbDeptInput);
-        assertTrue(saveResultOfCcDeptInput);
-        assertTrue(saveResultOfDdDeptInput);
-        assertTrue(saveResultOfEeDeptInput);
-        assertTrue(saveResultOfFfDeptInput);
+        assertEquals(saveResultOfAaDeptInput, DHCOutputStatus.SAVE_PERSONNEL_INFO_SUCCESS);
+        assertEquals(saveResultOfBbDeptInput, DHCOutputStatus.SAVE_PERSONNEL_INFO_SUCCESS);
+        assertEquals(saveResultOfCcDeptInput, DHCOutputStatus.SAVE_PERSONNEL_INFO_SUCCESS);
+        assertEquals(saveResultOfDdDeptInput, DHCOutputStatus.SAVE_PERSONNEL_INFO_SUCCESS);
+        assertEquals(saveResultOfEeDeptInput, DHCOutputStatus.SAVE_PERSONNEL_INFO_SUCCESS);
+        assertEquals(saveResultOfFfDeptInput, DHCOutputStatus.SAVE_PERSONNEL_INFO_SUCCESS);
 
-        assertSame(statusOfRelation1, DHCServiceStatus.SAVE_DEPT_COMPOSITION_SUCCESS);
-        assertSame(statusOfRelation2, DHCServiceStatus.SAVE_DEPT_COMPOSITION_SUCCESS);
-        assertSame(statusOfRelation3, DHCServiceStatus.SAVE_DEPT_COMPOSITION_SUCCESS);
-        assertSame(statusOfRelation4, DHCServiceStatus.SAVE_DEPT_COMPOSITION_SUCCESS);
-        assertSame(statusOfRelation5, DHCServiceStatus.SAVE_DEPT_COMPOSITION_SUCCESS);
-        assertSame(statusOfRelation6, DHCServiceStatus.SAVE_DEPT_COMPOSITION_SUCCESS);
+        assertSame(statusOfRelation1, DHCOutputStatus.UPDATE_DEPT_COMPOSITION_SUCCESS);
+        assertSame(statusOfRelation2, DHCOutputStatus.UPDATE_DEPT_COMPOSITION_SUCCESS);
+        assertSame(statusOfRelation3, DHCOutputStatus.UPDATE_DEPT_COMPOSITION_SUCCESS);
+        assertSame(statusOfRelation4, DHCOutputStatus.UPDATE_DEPT_COMPOSITION_SUCCESS);
+        assertSame(statusOfRelation5, DHCOutputStatus.UPDATE_DEPT_COMPOSITION_SUCCESS);
+        assertSame(statusOfRelation6, DHCOutputStatus.UPDATE_DEPT_COMPOSITION_SUCCESS);
 
         Map<String, Integer> totalCount = dhcService.calculateTopLevelDeptPersonnelSum(deptContainer);
 
@@ -377,14 +386,14 @@ public class DeptHeadCounterServiceTest {
         String[] processedRelation1 = inputProcessor.processInput(relation1);
 
         //when
-        boolean saveResultOfAaDeptInput = dhcService.saveDeptPersonnelInfo(deptContainer, processedAaDeptInput);
+        DHCOutputStatus saveResultOfAaDeptInput = getResultFromSavePersonnelInfo(processedAaDeptInput);
 
-        DHCServiceStatus statusOfRelation1 = dhcService.updateDeptStructure(deptContainer, processedRelation1);
+        DHCOutputStatus statusOfRelation1 = getResultFromUpdateDeptStructure(processedRelation1);
 
         //then
-        assertTrue(saveResultOfAaDeptInput);
+        assertEquals(saveResultOfAaDeptInput, DHCOutputStatus.SAVE_PERSONNEL_INFO_SUCCESS);
 
-        assertSame(statusOfRelation1, DHCServiceStatus.SAVE_DEPT_COMPOSITION_SUCCESS);
+        assertSame(statusOfRelation1, DHCOutputStatus.UPDATE_DEPT_COMPOSITION_SUCCESS);
 
         Map<String, Integer> totalCount = dhcService.calculateTopLevelDeptPersonnelSum(deptContainer);
 
@@ -436,34 +445,34 @@ public class DeptHeadCounterServiceTest {
         String[] processedRelation6 = inputProcessor.processInput(relation6);
 
         //when
-        boolean saveResultOfAaDeptInput = dhcService.saveDeptPersonnelInfo(deptContainer, processedAaDeptInput);
-        boolean saveResultOfBbDeptInput = dhcService.saveDeptPersonnelInfo(deptContainer, processedBbDeptInput);
-        boolean saveResultOfCcDeptInput = dhcService.saveDeptPersonnelInfo(deptContainer, processedCcDeptInput);
-        boolean saveResultOfDdDeptInput = dhcService.saveDeptPersonnelInfo(deptContainer, processedDdDeptInput);
-        boolean saveResultOfEeDeptInput = dhcService.saveDeptPersonnelInfo(deptContainer, processedEeDeptInput);
-        boolean saveResultOfFfDeptInput = dhcService.saveDeptPersonnelInfo(deptContainer, processedFfDeptInput);
+        DHCOutputStatus saveResultOfAaDeptInput = getResultFromSavePersonnelInfo(processedAaDeptInput);
+        DHCOutputStatus saveResultOfBbDeptInput = getResultFromSavePersonnelInfo(processedBbDeptInput);
+        DHCOutputStatus saveResultOfCcDeptInput = getResultFromSavePersonnelInfo(processedCcDeptInput);
+        DHCOutputStatus saveResultOfDdDeptInput = getResultFromSavePersonnelInfo(processedDdDeptInput);
+        DHCOutputStatus saveResultOfEeDeptInput = getResultFromSavePersonnelInfo(processedEeDeptInput);
+        DHCOutputStatus saveResultOfFfDeptInput = getResultFromSavePersonnelInfo(processedFfDeptInput);
 
-        DHCServiceStatus statusOfRelation1 = dhcService.updateDeptStructure(deptContainer, processedRelation1);
-        DHCServiceStatus statusOfRelation2 = dhcService.updateDeptStructure(deptContainer, processedRelation2);
-        DHCServiceStatus statusOfRelation3 = dhcService.updateDeptStructure(deptContainer, processedRelation3);
-        DHCServiceStatus statusOfRelation4 = dhcService.updateDeptStructure(deptContainer, processedRelation4);
-        DHCServiceStatus statusOfRelation5 = dhcService.updateDeptStructure(deptContainer, processedRelation5);
-        DHCServiceStatus statusOfRelation6 = dhcService.updateDeptStructure(deptContainer, processedRelation6);
+        DHCOutputStatus statusOfRelation1 = getResultFromUpdateDeptStructure(processedRelation1);
+        DHCOutputStatus statusOfRelation2 = getResultFromUpdateDeptStructure(processedRelation2);
+        DHCOutputStatus statusOfRelation3 = getResultFromUpdateDeptStructure(processedRelation3);
+        DHCOutputStatus statusOfRelation4 = getResultFromUpdateDeptStructure(processedRelation4);
+        DHCOutputStatus statusOfRelation5 = getResultFromUpdateDeptStructure(processedRelation5);
+        DHCOutputStatus statusOfRelation6 = getResultFromUpdateDeptStructure(processedRelation6);
 
         //then
-        assertTrue(saveResultOfAaDeptInput);
-        assertTrue(saveResultOfBbDeptInput);
-        assertTrue(saveResultOfCcDeptInput);
-        assertTrue(saveResultOfDdDeptInput);
-        assertTrue(saveResultOfEeDeptInput);
-        assertTrue(saveResultOfFfDeptInput);
+        assertEquals(saveResultOfAaDeptInput, DHCOutputStatus.SAVE_PERSONNEL_INFO_SUCCESS);
+        assertEquals(saveResultOfBbDeptInput, DHCOutputStatus.SAVE_PERSONNEL_INFO_SUCCESS);
+        assertEquals(saveResultOfCcDeptInput, DHCOutputStatus.SAVE_PERSONNEL_INFO_SUCCESS);
+        assertEquals(saveResultOfDdDeptInput, DHCOutputStatus.SAVE_PERSONNEL_INFO_SUCCESS);
+        assertEquals(saveResultOfEeDeptInput, DHCOutputStatus.SAVE_PERSONNEL_INFO_SUCCESS);
+        assertEquals(saveResultOfFfDeptInput, DHCOutputStatus.SAVE_PERSONNEL_INFO_SUCCESS);
 
-        assertSame(statusOfRelation1, DHCServiceStatus.SAVE_DEPT_COMPOSITION_SUCCESS);
-        assertSame(statusOfRelation2, DHCServiceStatus.SAVE_DEPT_COMPOSITION_SUCCESS);
-        assertSame(statusOfRelation3, DHCServiceStatus.SAVE_DEPT_COMPOSITION_SUCCESS);
-        assertSame(statusOfRelation4, DHCServiceStatus.SAVE_DEPT_COMPOSITION_SUCCESS);
-        assertSame(statusOfRelation5, DHCServiceStatus.SAVE_DEPT_COMPOSITION_SUCCESS);
-        assertSame(statusOfRelation6, DHCServiceStatus.SAVE_DEPT_COMPOSITION_SUCCESS);
+        assertSame(statusOfRelation1, DHCOutputStatus.UPDATE_DEPT_COMPOSITION_SUCCESS);
+        assertSame(statusOfRelation2, DHCOutputStatus.UPDATE_DEPT_COMPOSITION_SUCCESS);
+        assertSame(statusOfRelation3, DHCOutputStatus.UPDATE_DEPT_COMPOSITION_SUCCESS);
+        assertSame(statusOfRelation4, DHCOutputStatus.UPDATE_DEPT_COMPOSITION_SUCCESS);
+        assertSame(statusOfRelation5, DHCOutputStatus.UPDATE_DEPT_COMPOSITION_SUCCESS);
+        assertSame(statusOfRelation6, DHCOutputStatus.UPDATE_DEPT_COMPOSITION_SUCCESS);
 
         Map<String, Integer> totalCount = dhcService.calculateTopLevelDeptPersonnelSum(deptContainer);
 
@@ -490,4 +499,5 @@ public class DeptHeadCounterServiceTest {
 
         assertEquals(0,totalCount.size());
     }
+    
 }
