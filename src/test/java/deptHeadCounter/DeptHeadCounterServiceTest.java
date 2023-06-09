@@ -201,7 +201,7 @@ public class DeptHeadCounterServiceTest {
         assertEquals(saveResultOfAaDeptInput, DHCOutputStatus.SAVE_PERSONNEL_INFO_SUCCESS);
 
         assertSame(statusOfCorrectRelation, DHCOutputStatus.UPDATE_DEPT_COMPOSITION_SUCCESS);
-        assertSame(statusOfFaultyRelation, DHCOutputStatus.UPDATE_FAIL_ALREADY_HAVE_PARENT);
+        assertSame(statusOfFaultyRelation, DHCOutputStatus.UPDATE_FAIL_CANNOT_ADD_ITSELF_AS_CHILD);
     }
 
 
