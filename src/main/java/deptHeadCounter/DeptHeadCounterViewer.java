@@ -17,6 +17,10 @@ public class DeptHeadCounterViewer {
 
     protected static void printTotalHeadCount(Map<String,Integer> results){
         System.out.println("\n<상위부서별 부서 인원 합계>");
+        if (results.size() == 0) {
+            System.out.println("없음\n");
+            return;
+        }
         results.forEach((k,v) -> System.out.printf("%s, %d \n", k, v));
         System.out.println();
     }
@@ -52,6 +56,7 @@ public class DeptHeadCounterViewer {
             
                     부서 정보 입력 : [부서 이름] , [부서인원]
                     부서 관계 입력 : [상위부서 이름] > [하위부서 이름]
+                    서비스 종료 : q
                     
                     - 부서 이릅에는 영문 대문자 9자까지 입력 가능합니다.
                     - 부서 인원은 0~1000명까지 0과 자연수로 입력 가능합니다.
