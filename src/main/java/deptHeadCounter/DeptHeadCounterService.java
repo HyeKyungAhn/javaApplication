@@ -54,8 +54,9 @@ public class DeptHeadCounterService {
 
 
         if (childDept.getParent() != null && !isUnassignedDept(childDept.getParent())) {
-            if (childDept.getParent().getName().equals(childName)) {
+            if (parentName.equals(childName)) {
                 updateResult.put("updateResult", DHCOutputStatus.UPDATE_FAIL_CANNOT_ADD_ITSELF_AS_CHILD);
+                return updateResult;
             }
             updateResult.put("updateResult", DHCOutputStatus.UPDATE_FAIL_ALREADY_HAVE_PARENT);
             return updateResult;
