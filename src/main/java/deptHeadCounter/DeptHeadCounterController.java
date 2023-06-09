@@ -1,23 +1,60 @@
 package deptHeadCounter;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Scanner;
 
 public class DeptHeadCounterController implements Controller{
-    DepartmentContainer container;
-    DeptHeadCounterService service;
+    private DepartmentContainer container;
+    private DeptHeadCounterService service;
+    private Scanner scanner;
 
     @Override
     public void main() {
-        DeptHeadCounterInputProcessor inputProcessor = new DeptHeadCounterInputProcessor();
         initialize();
 
         printInfo(DHCOutputStatus.INFORMATION);
 
-        Scanner s = new Scanner(System.in);
+        scanner = getInputScanner();
+
+        processCommand();
+
+        scanner.close();
+    }
+
+    private void initialize() {
+        container = new DepartmentContainer();
+        service = new DeptHeadCounterService();
+    }
+
+    private Scanner getInputScanner() {
+        try {
+            File inputFile = new File(String.valueOf(Paths.get(System.getProperty("user.dir"), "src", "main", "resources", "dhcInputs.txt")));
+            return new Scanner(inputFile);
+        } catch (FileNotFoundException e) {
+            System.out.println("개발자 임의 입력값 파일을 찾을 수 없습니다. 수동으로 전환합니다.");
+            return new Scanner(System.in);
+        }
+    }
+
+    private String getNextInput() {
+        if (scanner.hasNextLine()) {
+            System.out.println(scanner.hasNextLine());
+        } else {
+            System.out.println("개발자 임의 입력값 입력이 끝났습니다. 수동으로 전환합니다.");
+            scanner.close();
+            scanner = new Scanner(System.in);
+        }
+        return scanner.nextLine();
+    }
+
+    private void processCommand(){
+        DeptHeadCounterInputProcessor inputProcessor = new DeptHeadCounterInputProcessor();
 
         while (true) {
-            String input = s.nextLine();
+            String input = getNextInput();
 
             if (input.equals("q")) {
                 break;
@@ -34,14 +71,7 @@ public class DeptHeadCounterController implements Controller{
         }
     }
 
-    @Override
-    public void initialize() {
-        container = new DepartmentContainer();
-        service = new DeptHeadCounterService();
-    }
-
-    @Override
-    public Map<String, Object> executeCommand(String[] dividedInput) {
+    private Map<String, Object> executeCommand(String[] dividedInput) {
         String verifier = dividedInput[1];
 
         if(verifier.equals(",")){
