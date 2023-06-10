@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class DeptHeadCounterService {
-    public static final String NODE_NAME_STORE_UNASSIGNED_DEPT = "unassigned";
+//    public static final String NODE_NAME_STORE_UNASSIGNED_DEPT = "UNASSIGNED";
 
     public Map<String, Object> saveDeptPersonnelInfo(DepartmentContainer container, String[] input){
         Map<String, Object> saveResult = new HashMap<>();
@@ -26,7 +26,7 @@ public class DeptHeadCounterService {
             return saveResult;
         }
 
-        Department dept = container.getDeptIfExist(NODE_NAME_STORE_UNASSIGNED_DEPT);
+        Department dept = container.getDeptIfExist(DepartmentContainer.NODE_NAME_STORE_UNASSIGNED_DEPT);
         saveResult.put("saveResult", getResultStatus(dept.addChild(deptName, count)));
 
         return saveResult;
@@ -47,13 +47,13 @@ public class DeptHeadCounterService {
         }
 
         if (!parentDept.getName().equals("*")
-                && (parentDept.getParent() == null || isUnassignedDept(parentDept.getParent()))) {
+                && isUnassigned(container, parentDept)) {
             updateResult.put("updateResult", DHCOutputStatus.UPDATE_FAIL_PARENT_NOT_ASSIGNED);
             return updateResult;
         }
 
 
-        if (childDept.getParent() != null && !isUnassignedDept(childDept.getParent())) {
+        if (!isUnassigned(container, childDept)) {
             if (parentName.equals(childName)) {
                 updateResult.put("updateResult", DHCOutputStatus.UPDATE_FAIL_CANNOT_ADD_ITSELF_AS_CHILD);
                 return updateResult;
@@ -62,11 +62,19 @@ public class DeptHeadCounterService {
             return updateResult;
         }
 
-        childDept.getParent().getChildren().remove(childDept); //unassiged에서 자기자신 지우기
+        removeDeptFromUnassigedNode(container, childDept);
+
         parentDept.addChild(childDept);
+
         updateResult.put("updateResult", DHCOutputStatus.UPDATE_DEPT_COMPOSITION_SUCCESS);
 
         return updateResult;
+    }
+
+    private void removeDeptFromUnassigedNode(DepartmentContainer container, Department childDept) {
+        Department unAssignedNode = container.getDeptIfExist(DepartmentContainer.NODE_NAME_STORE_UNASSIGNED_DEPT);
+
+        unAssignedNode.getChildren().remove(childDept);
     }
 
     public Map<String, Integer> calculateTopLevelDeptPersonnelSum(DepartmentContainer container){
@@ -81,7 +89,19 @@ public class DeptHeadCounterService {
     }
 
     private boolean isUnassignedDept(Department dept) {
-        return dept.getName().equals(NODE_NAME_STORE_UNASSIGNED_DEPT);
+        return dept.getName().equals(DepartmentContainer.NODE_NAME_STORE_UNASSIGNED_DEPT);
+    }
+
+    private boolean isUnassigned(DepartmentContainer container, Department dept) {
+        String deptName = dept.getName();
+        Department unAssignedNode = container.getDeptIfExist(DepartmentContainer.NODE_NAME_STORE_UNASSIGNED_DEPT);
+
+        for(Department child : unAssignedNode.getChildren()){
+            if (child.getName().equals(deptName)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private DHCOutputStatus getResultStatus(boolean isSuccess) {

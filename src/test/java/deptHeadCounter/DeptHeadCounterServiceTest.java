@@ -277,15 +277,26 @@ public class DeptHeadCounterServiceTest {
         assertSame(statusOfRelation5, DHCOutputStatus.UPDATE_DEPT_COMPOSITION_SUCCESS);
         assertSame(statusOfRelation6, DHCOutputStatus.UPDATE_DEPT_COMPOSITION_SUCCESS);
 
-        Department ddDept = deptContainer.getDeptIfExist("EE").getParent();
-        assertEquals("DD", ddDept.getName());
-        Department bbDept1 = ddDept.getParent();
-        assertEquals("BB", bbDept1.getName());
-        Department bbDept2 = deptContainer.getDeptIfExist("CC").getParent();
-        assertEquals(bbDept1, bbDept2);
-        Department aaDept1 = bbDept1.getParent();
-        Department aaDept2 = deptContainer.getDeptIfExist("FF").getParent();
-        assertEquals(aaDept1, aaDept2);
+        Department aaDept = deptContainer.getDeptIfExist("AA");
+        Department bbDept = deptContainer.getDeptIfExist("BB");
+        Department ccDept = deptContainer.getDeptIfExist("CC");
+        Department ddDept = deptContainer.getDeptIfExist("DD");
+        Department eeDept = deptContainer.getDeptIfExist("EE");
+        Department ffDept = deptContainer.getDeptIfExist("FF");
+
+        assertNotNull(aaDept);
+        assertEquals(2, aaDept.getChildren().size());
+        assertTrue(aaDept.getChildren().contains(bbDept));
+        assertTrue(aaDept.getChildren().contains(ffDept));
+
+        assertNotNull(bbDept);
+        assertEquals(2, bbDept.getChildren().size());
+        assertTrue(bbDept.getChildren().contains(ccDept));
+        assertTrue(bbDept.getChildren().contains(ddDept));
+
+        assertNotNull(ddDept);
+        assertEquals(1, ddDept.getChildren().size());
+        assertTrue(ddDept.getChildren().contains(eeDept));
     }
 
     @Test
@@ -495,8 +506,10 @@ public class DeptHeadCounterServiceTest {
         //given
         deptContainer.init();
 
+        //when
         Map<String, Integer> totalCount = dhcService.calculateTopLevelDeptPersonnelSum(deptContainer);
 
+        //then
         assertEquals(0,totalCount.size());
     }
     

@@ -7,7 +7,7 @@ import java.util.Queue;
 public class DepartmentContainer {
     private Department root;
 
-    public static final String NODE_NAME_STORE_UNASSIGNED_DEPT = "unassigned";
+    public static final String NODE_NAME_STORE_UNASSIGNED_DEPT = "UNASSIGNED";
 
     DepartmentContainer(){
         init();
@@ -15,7 +15,7 @@ public class DepartmentContainer {
 
     public void init(){
         root = new Department("*", 0);
-        root.addChild("unassigned", 0);
+        root.addChild(NODE_NAME_STORE_UNASSIGNED_DEPT, 0);
     }
 
     public Department getRoot(){
@@ -28,9 +28,6 @@ public class DepartmentContainer {
 
         while (!queue.isEmpty()) {
             Department currentDept = queue.poll();
-
-            deptName = !deptName.equals(NODE_NAME_STORE_UNASSIGNED_DEPT) ?
-                    deptName.toUpperCase(Locale.ROOT) : deptName;
 
             if (currentDept.getName().equals(deptName)) {
                 return currentDept;
