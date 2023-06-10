@@ -1,7 +1,9 @@
 package pachinko;
 
+import org.junit.Before;
 import org.junit.Test;
 
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -9,20 +11,21 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 public class DrawServiceTest {
+    private DrawService service;
+    private ProductContainer container;
+
     static final int PRICE_PER_DRAW = 100;
     static final int B_GRADE_DRAW_AVAILABLE_NUM = 3;
     static final double A_GRADE_DRAW_PROBABILITY = 0.9;
-
-    private DrawService getDrawService(){
-        return new DrawService();
-    }
 
     private User getUserWithWallet(int amount){
         return new User(new VirtualWallet((amount)));
     }
 
-    private ProductContainer getContainer(){
-        return new ProductContainer();
+    @Before
+    public void setUp(){
+        service = new DrawService();
+        container = new ProductContainer();
     }
 
     @Test
@@ -30,12 +33,10 @@ public class DrawServiceTest {
         //given
         int drawNum = 15;
         int balance = 1000; // not enough to draw
-        DrawService drawService = getDrawService();
         User user = getUserWithWallet(balance);
-        ProductContainer container = getContainer();
 
         //when
-        List<Product> drawResult = drawService.draw(drawNum, LocalDateTime.now(), container, user);
+        List<Product> drawResult = service.draw(drawNum, LocalDateTime.now(), container, user);
 
         //then
         assertNull(drawResult);
@@ -45,16 +46,14 @@ public class DrawServiceTest {
     public void testExpiredProductsNotIncludedInDrawResult(){
         //given
         int drawNum = 10000;
-        DrawService drawService = getDrawService();
         User user = getUserWithWallet(drawNum * PRICE_PER_DRAW);
-        ProductContainer container = getContainer();
 
         DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
         LocalDateTime expirationDate;
         LocalDateTime drawDateTime = LocalDateTime.now();
 
         //when
-        List<Product> drawResult = drawService.draw(drawNum, drawDateTime, container, user);
+        List<Product> drawResult = service.draw(drawNum, drawDateTime, container, user);
 
         //then
         for(Product p : drawResult){
@@ -68,14 +67,12 @@ public class DrawServiceTest {
     public void testBGradeProductDrawCountNotOver3(){
         //given
         int drawNum = 10000;
-        DrawService drawService = getDrawService();
         User user = getUserWithWallet(drawNum * PRICE_PER_DRAW);
-        ProductContainer container = getContainer();
 
         int bGradeDrawCount = 0;
 
         //when
-        List<Product> drawResult = drawService.draw(drawNum, LocalDateTime.now(), container, user);
+        List<Product> drawResult = service.draw(drawNum, LocalDateTime.now(), container, user);
 
         //then
         for(Product p : drawResult){
@@ -91,12 +88,10 @@ public class DrawServiceTest {
     public void testNoStockLimit(){
         //given
         int drawNum = 100000;
-        DrawService drawService = getDrawService();
         User user = getUserWithWallet(drawNum * PRICE_PER_DRAW);
-        ProductContainer container = getContainer();
 
         //when
-        List<Product> products = drawService.draw(drawNum, LocalDateTime.now(), container, user);
+        List<Product> products = service.draw(drawNum, LocalDateTime.now(), container, user);
 
         //then
         for(Product p : products){
@@ -110,13 +105,11 @@ public class DrawServiceTest {
     public void testGradeOfSelectedProductAOrB(){
         //given
         int drawNum = 10000;
-        DrawService drawService = getDrawService();
         User user = getUserWithWallet(drawNum * PRICE_PER_DRAW);
-        ProductContainer container = getContainer();
         String grade;
 
         //when
-        List<Product> products = drawService.draw(drawNum, LocalDateTime.now(), container, user);
+        List<Product> products = service.draw(drawNum, LocalDateTime.now(), container, user);
 
         //then
         for(Product p : products){
@@ -131,16 +124,14 @@ public class DrawServiceTest {
     public void testDrawResultHasOnlyThreeDistinctKinds(){
         //given
         int drawNum = 100;
-        DrawService drawService = getDrawService();
         User user = getUserWithWallet(drawNum * PRICE_PER_DRAW);
-        ProductContainer container = getContainer();
         int aGradeCount = 0;
         int bGradeCount = 0;
         int loseDrawCount = 0;
         String grade;
 
         //when
-        List<Product> drawResult = drawService.draw(100, LocalDateTime.now(), container, user);
+        List<Product> drawResult = service.draw(100, LocalDateTime.now(), container, user);
 
         for (Product product : drawResult) {
             grade = product.getGrade();
@@ -166,9 +157,7 @@ public class DrawServiceTest {
         // given
         int drawNum = 100000;
         double significanceLevel = 0.01;
-        DrawService drawService = getDrawService();
         User user = getUserWithWallet(drawNum * PRICE_PER_DRAW);
-        ProductContainer container = getContainer();
 
         int aGradeCount = 0;
         int bGradeCount = 0;
@@ -176,7 +165,7 @@ public class DrawServiceTest {
         String grade;
 
         // when
-        List<Product> drawResult = drawService.draw(drawNum, LocalDateTime.now(), container, user);
+        List<Product> drawResult = service.draw(drawNum, LocalDateTime.now(), container, user);
 
 
         for (Product product : drawResult) {
