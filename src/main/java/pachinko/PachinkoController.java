@@ -11,21 +11,21 @@ public class PachinkoController implements Controller{
     VirtualWallet wallet;
     ProductContainer productContainer;
     DrawService drawService;
+    PachinkoInputProcessor inputProcessor;
 
     private static final int PRINT_INFORMATION = 1;
     private static final int PRINT_WRONG_INPUT = 2;
 
     @Override
     public void main() {
-        PachinkoInputProcessor inputProcessor = new PachinkoInputProcessor();
         initialize();
 
         print(PRINT_INFORMATION);
 
-        Scanner s = new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in);
 
         while (true) {
-            String input = s.nextLine();
+            String input = scanner.nextLine();
 
             if (input.equals("q")) {
                 break;
@@ -40,30 +40,28 @@ public class PachinkoController implements Controller{
 
             print(executeCommand(dividedInput));
         }
+
+        scanner.close();
     }
 
-    @Override
-    public void initialize() {
+    private void initialize() {
         int initialDeposit = 10000;
         wallet = new VirtualWallet(initialDeposit);
         user = new User(wallet);
         productContainer = new ProductContainer();
         drawService = new DrawService();
+        inputProcessor = new PachinkoInputProcessor();
     }
 
-    @Override
-    public Map<String, Object> executeCommand(String[] dividedInput) {
+    private Map<String, Object> executeCommand(String[] dividedInput) {
         Map<String, Object> returnValue = new HashMap<>();
         String command = dividedInput[0];
+
         switch (command) {
-            case "money" -> returnValue.put("balance", wallet.getBalance());
+            case "balance" -> returnValue.put("balance", wallet.getBalance());
             case "draw" -> {
                 int drawNum = Integer.parseInt(dividedInput[1]);
-                returnValue.put("draw",
-                        drawService.draw(drawNum,
-                                LocalDateTime.now(),
-                                productContainer,
-                                user));
+                returnValue.put("draw", drawService.draw(drawNum, LocalDateTime.now(), productContainer, user));
             }
             case "deposit" -> {
                 int depositAmount = Integer.parseInt(dividedInput[1]);
@@ -72,15 +70,12 @@ public class PachinkoController implements Controller{
             default -> returnValue.put("wrong",null);
         }
 
-
         return returnValue;
     }
 
     private void print(Map<String, Object> results){
         if (results.containsKey("balance")) {
             printBalance((Integer) results.get("balance"));
-
-            executeCommand(new String[]{"money"});
         } else if (results.containsKey("draw")) {
             printDrawResults((List<Product>) results.get("draw"));
         } else if (results.containsKey("deposit")) {
@@ -134,12 +129,13 @@ public class PachinkoController implements Controller{
                     <안내>
                     SHARETREATS의 빠칭코 상품 뽑기 서비스입니다
                     빠칭코 서비스를 이용하시려면 다음의 명령어를 입력해주세요
-                    보유금액 확인 : MONEY
+                    보유금액 확인 : BALANCE
                     뽑기 : DRAW [원하는 뽑기 횟수]
                     돈충전 : DEPOSIT [원하는 충전 액수]
                     서비스 종료 : q
                     
                     - 뽑기 1회에 100이 차감됩니다
+                    - 원하는 충전 액수에는 자연수만 입력 가능합니다.
                     - 충전하여 지갑에 보유할 수 있는 총 액수는 21억입니다
                     """);
         } else if (status == PRINT_WRONG_INPUT) {
@@ -147,13 +143,13 @@ public class PachinkoController implements Controller{
                     잘못된 입력입니다. 다시 입력해주세요.
                     
                     <명령어 형식>
-                    보유금액 확인 : MONEY
+                    보유금액 확인 : BALANCE
                     뽑기 : DRAW [원하는 뽑기 횟수]
                     돈충전 : DEPOSIT [원하는 충전 액수]
                     서비스 종료 : q
                     
+                    - 원하는 충전 액수에는 자연수만 입력 가능합니다.
                     - 충전하여 지갑에 보유할 수 있는 총 액수는 21억입니다
-                    - 따라서 뽑기 최대 횟수는 2천1백만번 입니다
                     """);
         }
     }
