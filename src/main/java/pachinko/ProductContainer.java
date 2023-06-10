@@ -21,6 +21,11 @@ public class ProductContainer {
         setProductList(generateProductList(filePath));
     }
 
+    ProductContainer(String filePath) {
+        productList = new HashSet<>();
+        setProductList(generateProductList(filePath));
+    }
+
     private Set<Product> generateProductList(String filePath){
         File productResource = new File(filePath);
         BufferedReader br;
