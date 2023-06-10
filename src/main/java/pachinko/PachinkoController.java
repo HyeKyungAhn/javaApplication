@@ -7,11 +7,11 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class PachinkoController implements Controller{
-    User user;
-    VirtualWallet wallet;
-    ProductContainer productContainer;
-    DrawService drawService;
-    PachinkoInputProcessor inputProcessor;
+    private User user;
+    private VirtualWallet wallet;
+    private ProductContainer productContainer;
+    private DrawService drawService;
+    private PachinkoInputProcessor inputProcessor;
 
     private static final int PRINT_INFORMATION = 1;
     private static final int PRINT_WRONG_INPUT = 2;
