@@ -90,12 +90,10 @@ public class ProductContainer {
         int notEdpiredGradeBNum = 0;
 
         for (Product p : productList) {
-            System.out.println(p);
             expirationDate = LocalDateTime.from(formatter.parse(p.getExpirationDate()));
             grade = p.getGrade();
 
             if(expirationDate.isAfter(drawDateTime)){
-                System.out.println("만료!");
                 if(grade.equals("A")) {
                     notExpiredGradeANum++;
                     continue;

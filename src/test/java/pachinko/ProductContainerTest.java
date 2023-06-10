@@ -56,7 +56,7 @@ public class ProductContainerTest {
 
         //when
         boolean result = productContainer.haveAtLeastTwoNotExpiredProductsPerGrade(LocalDateTime.now());
-
+        System.out.println(result);
         //then
         assertFalse(result);
     }
