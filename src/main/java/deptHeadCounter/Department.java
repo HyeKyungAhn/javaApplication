@@ -6,22 +6,21 @@ import java.util.List;
 public class Department {
     private String name;
     private int count;
-    private Department parent;
-    private List<Department> children = new ArrayList<>();
+    private List<Department> children;
 
     Department(){}
 
     public Department(String name, int count){
         this.name = name;
         this.count = count;
+        this.children = new ArrayList<>();
     }
 
     public void addChild(Department dept) {
         if (dept == this) {
-            throw new IllegalArgumentException("Cannot add a node as its own child.");
+            throw new IllegalArgumentException(dept.getName() +" 부서를 " + dept.getName() + " 부서의 하위부서로 둘 수 없습니다.");
         }
 
-        dept.setParent(this);
         this.children.add(dept);
     }
 
@@ -35,10 +34,6 @@ public class Department {
 
     public List<Department> getChildren(){
         return children;
-    }
-
-    private void setParent(Department department) {
-        this.parent = department;
     }
 
     public String getName(){
@@ -55,10 +50,6 @@ public class Department {
 
     public int getCount() {
         return count;
-    }
-
-    public Department getParent(){
-        return parent;
     }
 
     private boolean isUnderThousand(int count) {
