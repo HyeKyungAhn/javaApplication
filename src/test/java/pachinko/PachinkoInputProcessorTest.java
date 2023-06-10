@@ -12,11 +12,11 @@ public class PachinkoInputProcessorTest {
     @Test
     public void inputStringRegexTest(){
         //given
-        String faultyInput1 = "mone^";
+        String faultyInput1 = "bal^";
         String faultyInput2 = "Draw ++++";
         String faultyInput3 = "deposit 00$";
 
-        String correctInput1 = "money";
+        String correctInput1 = "balance";
         String correctInput2 = "draw 12";
         String correctInput3 = "deposit 10000";
 
@@ -33,7 +33,7 @@ public class PachinkoInputProcessorTest {
         assertNull(resultOfFaultyInput2);
         assertNull(resultOfFaultyInput3);
 
-        assertEquals(1, resultOfCorrectInput1.length); // money (array length = 1)
+        assertEquals(1, resultOfCorrectInput1.length); // balance (array length = 1)
         assertEquals(2, resultOfCorrectInput2.length); // draw 12 (array length = 2)
         assertEquals(2, resultOfCorrectInput3.length); // charge 10000 (array length = 2)
 
@@ -43,10 +43,10 @@ public class PachinkoInputProcessorTest {
     public void testInputLengthLimit(){
         //given
         String faultyInput1 = "                                        ";
-        String faultyInput2 = "money                     22222";
+        String faultyInput2 = "balance                     22222";
         String faultyInput3 = "deposit 12222222222222222222222222222222";
 
-        String correctInput1 = "money";
+        String correctInput1 = "balance";
         String correctInput2 = "draw 12";
         String correctInput3 = "deposit 10000";
         //when
@@ -63,7 +63,7 @@ public class PachinkoInputProcessorTest {
         assertNull(resultOfFaultyInput2);
         assertNull(resultOfFaultyInput3);
 
-        assertEquals(1, resultOfCorrectInput1.length); // money (array length = 1)
+        assertEquals(1, resultOfCorrectInput1.length); // balance (array length = 1)
         assertEquals(2, resultOfCorrectInput2.length); // draw 12 (array length = 2)
         assertEquals(2, resultOfCorrectInput3.length); // charge 10000 (array length = 2)
     }
@@ -71,12 +71,12 @@ public class PachinkoInputProcessorTest {
     @Test
     public void testCommandForm(){
         //given
-        String faultyInput1 = "money asdf";
+        String faultyInput1 = "balance asdf";
         String faultyInput2 = "draw";
         String faultyInput3 = "deposit asdf asdf";
         String faultyInput4 = "deposit 1000 0";
 
-        String correctInput1 = "money";
+        String correctInput1 = "balance";
         String correctInput2 = "draw 12";
         String correctInput3 = "deposit 10000";
         //when
@@ -95,7 +95,7 @@ public class PachinkoInputProcessorTest {
         assertNull(resultOfFaultyInput3);
         assertNull(resultOfFaultyInput4);
 
-        assertEquals(1, resultOfCorrectInput1.length); // money (array length = 1)
+        assertEquals(1, resultOfCorrectInput1.length); // balance (array length = 1)
         assertEquals(2, resultOfCorrectInput2.length); // draw 12 (array length = 2)
         assertEquals(2, resultOfCorrectInput3.length); // charge 10000 (array length = 2)
     }
@@ -128,7 +128,7 @@ public class PachinkoInputProcessorTest {
     }
 
     @Test
-    public void testMoneyInputNaturalValue(){
+    public void testBalanceInputNaturalValue(){
         //given
         String faultyInput1 = "deposit 100 000";
         String faultyInput2 = "deposit 12a1";

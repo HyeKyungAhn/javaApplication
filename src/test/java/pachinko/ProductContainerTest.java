@@ -3,6 +3,8 @@ package pachinko;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -44,5 +46,18 @@ public class ProductContainerTest {
 
         assertTrue(aGradeCount >= 2);
         assertTrue(bGradeCount >= 2);
+    }
+
+    @Test
+    public void testResultFalseIfLessThanTwoNotExpiredProducts(){
+        //만료되지 않은 A등급 상품 1개, 만료되지 않은 B등급 상품 2개
+        String filePath = String.valueOf(Paths.get(System.getProperty("user.dir"), "src", "test", "resources", "productSourceForExpirationTest.txt"));
+        productContainer = new ProductContainer(filePath);
+
+        //when
+        boolean result = productContainer.haveAtLeastTwoNotExpiredProductsPerGrade(LocalDateTime.now());
+
+        //then
+        assertFalse(result);
     }
 }

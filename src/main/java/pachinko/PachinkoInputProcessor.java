@@ -34,7 +34,7 @@ public class PachinkoInputProcessor implements InputProcessor{
                 result = false;
             } else if(inputArrLength == 1 && inputArr[0].trim().equals("")){ //only enter
                 result = false;
-            } else if(inputArr[0].equals("money")){
+            } else if(inputArr[0].equals("balance")){
                 result = (inputArrLength == 1);
             } else if (inputArr[0].equals("draw") || inputArr[0].equals("deposit")) {
                 result = (inputArrLength == 2 && isNaturalNumber(inputArr[1]) && isInIntegerLimit(inputArr[1]));
