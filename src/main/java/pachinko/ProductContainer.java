@@ -14,7 +14,7 @@ import java.util.Set;
 
 public class ProductContainer {
     private Set<Product> productList;
-
+    DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
     ProductContainer(){
         productList = new HashSet<>();
         String filePath = String.valueOf(Paths.get(System.getProperty("user.dir"), "src", "main", "resources", "productSource.txt"));
@@ -70,7 +70,6 @@ public class ProductContainer {
 
     private List<Product> getAvailableProductsByGrade(String grade, LocalDateTime drawDateTime) {
         List<Product> avaliableProductList = new ArrayList<>();
-        DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
         LocalDateTime expirationDate;
 
         for(Product p : productList){
@@ -82,5 +81,29 @@ public class ProductContainer {
         }
 
         return avaliableProductList;
+    }
+
+    public boolean haveAtLeastTwoNotExpiredProductsPerGrade(LocalDateTime drawDateTime){
+        LocalDateTime expirationDate;
+        String grade;
+        int notExpiredGradeANum = 0;
+        int notEdpiredGradeBNum = 0;
+
+        for (Product p : productList) {
+            System.out.println(p);
+            expirationDate = LocalDateTime.from(formatter.parse(p.getExpirationDate()));
+            grade = p.getGrade();
+
+            if(expirationDate.isAfter(drawDateTime)){
+                System.out.println("만료!");
+                if(grade.equals("A")) {
+                    notExpiredGradeANum++;
+                    continue;
+                }
+                notEdpiredGradeBNum++;
+            }
+        }
+
+        return notExpiredGradeANum >= 2 && notEdpiredGradeBNum >= 2;
     }
 }
