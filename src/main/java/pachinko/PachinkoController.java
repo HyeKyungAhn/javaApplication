@@ -15,6 +15,7 @@ public class PachinkoController implements Controller{
 
     private static final int PRINT_INFORMATION = 1;
     private static final int PRINT_WRONG_INPUT = 2;
+    private static final int NO_PRODUCT_AVAILABLE = 3;
 
     @Override
     public void main() {
@@ -26,6 +27,11 @@ public class PachinkoController implements Controller{
 
         while (true) {
             String input = scanner.nextLine();
+
+            if (productContainer.haveAtLeastTwoNotExpiredProductsPerGrade(LocalDateTime.now())) {
+                print(NO_PRODUCT_AVAILABLE);
+                System.exit(0);
+            }
 
             if (input.equals("q")) {
                 break;
@@ -151,6 +157,8 @@ public class PachinkoController implements Controller{
                     - 원하는 충전 액수에는 자연수만 입력 가능합니다.
                     - 충전하여 지갑에 보유할 수 있는 총 액수는 21억입니다
                     """);
+        } else if (status == NO_PRODUCT_AVAILABLE) {
+            System.out.println("현재 뽑기 가능한 상품이 부족합니다. 뽑기를 종료합니다.");
         }
     }
 }
