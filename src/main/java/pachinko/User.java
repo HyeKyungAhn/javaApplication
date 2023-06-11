@@ -1,7 +1,5 @@
 package pachinko;
 
-import java.util.List;
-
 public class User {
     private VirtualWallet wallet;
     private int bGradeDrawCount;

@@ -1,13 +1,15 @@
 package pachinko;
 
+import java.time.LocalDateTime;
+
 public class Product {
     private String type;
     private String grade;
-    private String expirationDate;
+    private LocalDateTime expirationDate;
 
     public Product(){}
 
-    public Product(String type, String grade, String expirationDate) {
+    public Product(String type, String grade, LocalDateTime expirationDate) {
         this.type = type;
         this.grade = grade;
         this.expirationDate = expirationDate;
@@ -29,11 +31,11 @@ public class Product {
         this.grade = grade;
     }
 
-    public String getExpirationDate() {
+    public LocalDateTime getExpirationDate() {
         return expirationDate;
     }
 
-    public void setExpirationDate(String expirationDate) {
+    public void setExpirationDate(LocalDateTime expirationDate) {
         this.expirationDate = expirationDate;
     }
 

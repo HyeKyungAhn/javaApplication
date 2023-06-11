@@ -3,9 +3,7 @@ package pachinko;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -48,8 +46,6 @@ public class DrawServiceTest {
         int drawNum = 10000;
         User user = getUserWithWallet(drawNum * PRICE_PER_DRAW);
 
-        DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
-        LocalDateTime expirationDate;
         LocalDateTime drawDateTime = LocalDateTime.now();
 
         //when
@@ -57,9 +53,8 @@ public class DrawServiceTest {
 
         //then
         for(Product p : drawResult){
-            if(p.getExpirationDate().equals("")) continue;
-            expirationDate = LocalDateTime.from(formatter.parse(p.getExpirationDate()));
-            assertFalse("Expired products are included in the draw result", expirationDate.isBefore(drawDateTime));
+            if(p.getExpirationDate()==null) continue;
+            assertFalse("Expired products are included in the draw result", p.getExpirationDate().isBefore(drawDateTime));
         }
     }
 
