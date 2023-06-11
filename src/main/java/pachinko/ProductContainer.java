@@ -34,11 +34,12 @@ public class ProductContainer {
         try{
             br = new BufferedReader(new FileReader(productResource));
             String[] headers = br.readLine().split(","); //remove header
+            LocalDateTime expirationDate;
 
             while ((line = br.readLine()) != null) {
                 String[] lineArr = line.split(",");
-
-                Product p = new Product(lineArr[0], lineArr[1], lineArr[2]);
+                expirationDate = LocalDateTime.from(formatter.parse(lineArr[2]));
+                Product p = new Product(lineArr[0], lineArr[1], expirationDate);
                 productList.add(p);
             }
         } catch (IOException e) {
@@ -70,12 +71,9 @@ public class ProductContainer {
 
     private List<Product> getAvailableProductsByGrade(String grade, LocalDateTime drawDateTime) {
         List<Product> avaliableProductList = new ArrayList<>();
-        LocalDateTime expirationDate;
 
         for(Product p : productList){
-            expirationDate = LocalDateTime.from(formatter.parse(p.getExpirationDate()));
-
-            if(p.getGrade().equals(grade) && expirationDate.isAfter(drawDateTime)) {
+            if(p.getGrade().equals(grade) && p.getExpirationDate().isAfter(drawDateTime)) {
                 avaliableProductList.add(p);
             }
         }
@@ -84,17 +82,13 @@ public class ProductContainer {
     }
 
     public boolean haveAtLeastTwoNotExpiredProductsPerGrade(LocalDateTime drawDateTime){
-        LocalDateTime expirationDate;
-        String grade;
         int notExpiredGradeANum = 0;
         int notEdpiredGradeBNum = 0;
 
         for (Product p : productList) {
-            expirationDate = LocalDateTime.from(formatter.parse(p.getExpirationDate()));
-            grade = p.getGrade();
 
-            if(expirationDate.isAfter(drawDateTime)){
-                if(grade.equals("A")) {
+            if(p.getExpirationDate().isAfter(drawDateTime)){
+                if(p.getGrade().equals("A")) {
                     notExpiredGradeANum++;
                     continue;
                 }
