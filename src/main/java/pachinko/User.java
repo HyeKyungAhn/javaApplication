@@ -14,10 +14,6 @@ public class User {
         return wallet;
     }
 
-    public void setWallet(VirtualWallet wallet) {
-        this.wallet = wallet;
-    }
-
     public int getbGradeDrawCount() {
         return bGradeDrawCount;
     }
