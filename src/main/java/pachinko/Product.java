@@ -19,24 +19,12 @@ public class Product {
         return type;
     }
 
-    public void setType(String type) {
-        this.type = type;
-    }
-
     public String getGrade() {
         return grade;
     }
 
-    public void setGrade(String grade) {
-        this.grade = grade;
-    }
-
     public LocalDateTime getExpirationDate() {
         return expirationDate;
-    }
-
-    public void setExpirationDate(LocalDateTime expirationDate) {
-        this.expirationDate = expirationDate;
     }
 
     @Override
