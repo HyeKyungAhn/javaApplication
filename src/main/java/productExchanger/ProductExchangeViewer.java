@@ -42,7 +42,7 @@ public class ProductExchangeViewer {
         } else if(status == PEResultStatus.EXCHANGE_FAIL){
             System.out.print("교환불가한 제품코드입니다.\n교환에 실패했습니다.\n");
         } else if (status == PEResultStatus.NO_PRODUCT_CODE) {
-            System.out.println("교환가능한 제품코드어 서비스를 종료합니다.\n관리자에게 문의 바랍니다.");
+            System.out.println("교환가능한 제품코드가 없어 서비스를 종료합니다.\n관리자에게 문의 바랍니다.");
         }
     }
 }
