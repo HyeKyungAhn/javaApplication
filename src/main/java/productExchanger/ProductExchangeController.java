@@ -57,6 +57,6 @@ public class ProductExchangeController implements Controller{
 
     private boolean checkProductCodeEmpty() {
         Set<ProductCode> productCodes = p.getProductCodes();
-        return productCodes == null;
+        return productCodes.size() < 10;
     }
 }
