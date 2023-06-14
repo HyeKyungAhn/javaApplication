@@ -16,7 +16,7 @@ public class ProductExchangeServiceTest {
         pcc = new ProductCodeContainer();
     }
 
-    //교환 가능 여부 확인 가능
+    //고객에게 제공된 상품코드로 교환 가능 확인 가능
     @Test
     public void successToCheckWithProvidedProductCode(){
         //given
@@ -34,6 +34,7 @@ public class ProductExchangeServiceTest {
         assertEquals(PEResultStatus.EXCHANGEABLE_CODE, result);
     }
 
+    //임의의 상품코드로 교환 가능 여부 확인 불가능
     @Test
     public void failToCheckWithRandomProductCode(){
         //given
@@ -55,6 +56,7 @@ public class ProductExchangeServiceTest {
         assertEquals(PEResultStatus.UNEXCHANGEABLE_CODE, result);
     }
 
+    //개발자가 제공하였으나 사용자에게 제공되지 않은 상품코드로 교한 가능 여부 확인 불가능
     @Test
     public void failCheckWithGenerateButNotProvidedProductCode(){
         //given
@@ -72,6 +74,7 @@ public class ProductExchangeServiceTest {
         assertEquals(PEResultStatus.UNEXCHANGEABLE_CODE, result);
     }
 
+    //이미 사용한 상품코드 사용시 교환 불가능
     @Test
     public void failCheckWithUsedProductCode(){
         //given
@@ -107,7 +110,7 @@ public class ProductExchangeServiceTest {
         assertEquals(PEResultStatus.UNEXCHANGEABLE_CODE, checkResult2);
     }
 
-
+    //사용법 안내 확인 가능
     @Test
     public void successToHelpWithValidInputFormat(){
         //given
@@ -119,6 +122,7 @@ public class ProductExchangeServiceTest {
         assertEquals(PEResultStatus.HELP, result);
     }
 
+    //고객에게 제공된 코드와 올바른 형식으로 claim 호출시 상품 교환 가능
     @Test
     public void successToClaimWithValidInputAndFormat(){
         //given
@@ -143,6 +147,9 @@ public class ProductExchangeServiceTest {
         assertEquals(PEResultStatus.EXCHANGE_SUCCESS, result);
     }
 
+    //임의의 상품코드 20개안에 포함되나,
+    //사용자에게 제공된 10개의 상품 코드가 아니라면
+    //상품 교환 불가
     @Test
     public void failToClaimWithGeneratedButNotProvidedProductCode(){
         //given
@@ -167,6 +174,7 @@ public class ProductExchangeServiceTest {
         assertEquals(PEResultStatus.EXCHANGE_FAIL, result);
     }
 
+    //이미 교환한 상품 코드 재입력시 교환 불가
     @Test
     public void failToClaimWithUsedProductCode(){
         //given
@@ -194,6 +202,7 @@ public class ProductExchangeServiceTest {
 
     }
 
+    //무작위 상품 코드 입력시 교환 불가
     @Test
     public void failToClaimWithRandomProductCode(){
         //given
