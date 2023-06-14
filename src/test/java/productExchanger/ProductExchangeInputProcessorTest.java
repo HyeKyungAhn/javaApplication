@@ -9,7 +9,7 @@ import static org.junit.Assert.*;
 public class ProductExchangeInputProcessorTest {
     //0~9, a~z, A~Z, SPACE 외의 문자 입력 불가 && 30문자 이상 입력불가?
     @Test
-    public void FailToInputIFUserInputNotValidInputString(){
+    public void FailToInputIFUserInputInvalidInputString(){
         //given
         String correctInput = "claim AACCdD 123123123";
 
@@ -170,5 +170,38 @@ public class ProductExchangeInputProcessorTest {
         assertNull(result3);
         assertNull(result4);
         assertNull(result5);
+    }
+
+    @Test
+    public void returnFalseWhenInputCommandIsInvalid(){
+        //given
+        String faultyInput1 = "claie ssddff 123123123456";
+        String faultyInput2 = "class ssddff 123123aaa";
+        String faultyInput3 = "c ssddff 123123@@@";
+        String faultyInput4 = "@# ssddff  ";
+        String faultyInput5 = "cheese 123123123456";
+        String faultyInput6 = "charm 123123aaa";
+        String faultyInput7 = "123123@@@";
+        String faultyInput8 = "helpp";
+
+        //when
+        String[] result1 = InputProcessor.processInput(faultyInput1);
+        String[] result2 = InputProcessor.processInput(faultyInput2);
+        String[] result3 = InputProcessor.processInput(faultyInput3);
+        String[] result4 = InputProcessor.processInput(faultyInput4);
+        String[] result5 = InputProcessor.processInput(faultyInput5);
+        String[] result6 = InputProcessor.processInput(faultyInput6);
+        String[] result7 = InputProcessor.processInput(faultyInput7);
+        String[] result8 = InputProcessor.processInput(faultyInput8);
+
+        //then
+        assertNull(result1);
+        assertNull(result2);
+        assertNull(result3);
+        assertNull(result4);
+        assertNull(result5);
+        assertNull(result6);
+        assertNull(result7);
+        assertNull(result8);
     }
 }
