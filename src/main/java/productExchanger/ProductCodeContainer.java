@@ -42,7 +42,7 @@ public class ProductCodeContainer {
     private HashSet<ProductCode> get20ProductCodes(){
         HashSet<ProductCode> productCodes = new HashSet<>();
 
-        String filePath = String.valueOf(Paths.get(System.getProperty("user.dir"), "src", "main", "resources", "inputSource.txt"));
+        String filePath = String.valueOf(Paths.get(System.getProperty("user.dir"), "src", "main", "resources", "productCodeSource.txt"));
         File file = new File(filePath);
         BufferedReader reader;
         String line;
