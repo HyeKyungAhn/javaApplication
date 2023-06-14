@@ -47,4 +47,16 @@ public class ProductCodeContainerTest {
         //then
         assertEquals(10, providedProductCodeNum);
     }
+
+    @Test
+    public void returnNullIfProductSourceFileIsNotFound(){
+        //given
+        pcc = new ProductCodeContainer("nofile");
+
+        //when
+        HashSet<ProductCode> productCodes = (HashSet<ProductCode>) pcc.getProductCodes();
+
+        //then
+        assertEquals(0, productCodes.size());
+    }
 }
