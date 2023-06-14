@@ -8,8 +8,8 @@ public class ProductExchangeController implements Controller{
     public void main(){
         initialize();
 
-//        PEViewer.print(PEResultStatus.HELP);
-//        PEViewer.print(p.getProductCodes());
+        ProductExchangeViewer.print(PEResultStatus.HELP);
+        ProductExchangeViewer.print(p.getProductCodes());
 
         Scanner s = new Scanner(System.in);
 
@@ -23,11 +23,11 @@ public class ProductExchangeController implements Controller{
             String[] dividedInput = InputProcessor.processInput(input);
 
             if(dividedInput == null){
-//                PEViewer.print(PEResultStatus.WRONG_INPUT);
+                ProductExchangeViewer.print(PEResultStatus.WRONG_INPUT);
                 continue;
             }
 
-//            PEViewer.print(CommandProcessor.processCommand(dividedInput, p));
+            ProductExchangeViewer.print(ProductExchangeService.processCommand(dividedInput, p));
         }
     }
 
