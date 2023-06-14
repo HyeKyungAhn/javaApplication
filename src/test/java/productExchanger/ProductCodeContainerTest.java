@@ -48,8 +48,9 @@ public class ProductCodeContainerTest {
         assertEquals(10, providedProductCodeNum);
     }
 
+    //상품교환 코드가 제공되지 않으면 productCode set size = 0
     @Test
-    public void returnNullIfProductSourceFileIsNotFound(){
+    public void returnSizeZeroIfProductSourceFileIsNotFound(){
         //given
         pcc = new ProductCodeContainer("nofile");
 
