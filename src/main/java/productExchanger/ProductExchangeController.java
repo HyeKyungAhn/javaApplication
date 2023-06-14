@@ -27,8 +27,21 @@ public class ProductExchangeController implements Controller{
                 continue;
             }
 
-            ProductExchangeViewer.print(ProductExchangeService.processCommand(dividedInput, p));
+            ProductExchangeViewer.print(processCommand(dividedInput, p));
         }
+    }
+
+    public static PEResultStatus processCommand(String[] command, ProductCodeContainer p){
+        PEResultStatus result;
+
+        switch (command[PEInput.getCommandIndex()]) {
+            case "check" -> result = ProductExchangeService.check(command, p);
+            case "help" -> result = ProductExchangeService.help();
+            case "claim" -> result = ProductExchangeService.claim(command, p);
+            default -> result = PEResultStatus.WRONG_INPUT;
+        }
+
+        return result;
     }
 
     private void initialize(){
