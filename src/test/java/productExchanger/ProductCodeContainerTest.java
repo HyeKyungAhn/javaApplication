@@ -25,6 +25,9 @@ public class ProductCodeContainerTest {
 
         //then
         assertEquals(20, codes.size());
+        for (ProductCode pcode : codes) {
+            assertNotEquals("", pcode.getProductCode());
+        }
     }
 
     //20개의 코드 중, 10개가 사용자에게 제공되는가?
