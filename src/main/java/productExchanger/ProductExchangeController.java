@@ -32,6 +32,6 @@ public class ProductExchangeController implements Controller{
     }
 
     private void initialize(){
-        p = ProductCodeContainer.getInstance();
+        p = new ProductCodeContainer();
     }
 }

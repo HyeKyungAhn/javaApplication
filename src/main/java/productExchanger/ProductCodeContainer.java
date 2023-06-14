@@ -10,13 +10,9 @@ public class ProductCodeContainer {
     static final int TOTAL_PRODUCT_CODE_NUM = 20;
     static final int PROVIDED_PRODUCT_CODE_NUM = 10;
 
-    private ProductCodeContainer(){
+    ProductCodeContainer(){
         setProductCodes(get20ProductCodes());
         change10ProductCodeProvided();
-    }
-
-    public static ProductCodeContainer getInstance(){
-        return new ProductCodeContainer();
     }
 
     public Set<ProductCode> getProductCodes() {
