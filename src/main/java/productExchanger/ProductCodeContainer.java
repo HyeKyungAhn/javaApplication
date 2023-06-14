@@ -11,7 +11,13 @@ public class ProductCodeContainer {
     static final int PROVIDED_PRODUCT_CODE_NUM = 10;
 
     ProductCodeContainer(){
-        setProductCodes(get20ProductCodes());
+        String filePath = String.valueOf(Paths.get(System.getProperty("user.dir"), "src", "main", "resources", "productCodeSource.txt"));
+        setProductCodes(get20ProductCodes(filePath));
+        change10ProductCodeProvided();
+    }
+
+    ProductCodeContainer(String filePath){
+        setProductCodes(get20ProductCodes(filePath));
         change10ProductCodeProvided();
     }
 
@@ -23,26 +29,9 @@ public class ProductCodeContainer {
         this.productCodes = productCodes;
     }
 
-    private HashSet<ProductCode> generate20ProductCodes(){
-        int ranNum;
+    private HashSet<ProductCode> get20ProductCodes(String filePath){
         HashSet<ProductCode> productCodes = new HashSet<>();
 
-        for(int i=0; i<TOTAL_PRODUCT_CODE_NUM; i++){
-            try {
-                ranNum = (int) (Math.random() * (999999999 - 100000000) + 100000000);
-                productCodes.add(new ProductCode(ranNum + ""));
-            } catch (IllegalArgumentException e){
-                i--;
-            }
-        }
-
-        return productCodes;
-    }
-
-    private HashSet<ProductCode> get20ProductCodes(){
-        HashSet<ProductCode> productCodes = new HashSet<>();
-
-        String filePath = String.valueOf(Paths.get(System.getProperty("user.dir"), "src", "main", "resources", "productCodeSource.txt"));
         File file = new File(filePath);
         BufferedReader reader;
         String line;
@@ -52,7 +41,7 @@ public class ProductCodeContainer {
                 productCodes.add(new ProductCode(line));
             }
         } catch (IOException e){
-            return generate20ProductCodes();
+            productCodes.clear();
         }
 
         return productCodes;
@@ -63,7 +52,10 @@ public class ProductCodeContainer {
     }
 
     private void change10ProductCodeProvided(){
+        if(productCodes.size() < 10) return;
+
         Iterator<ProductCode> iterator = productCodes.iterator();
+
         for(int i=0; i<PROVIDED_PRODUCT_CODE_NUM; i++){
             ProductCode productCode = iterator.next();
             productCode.setProvided(true);
