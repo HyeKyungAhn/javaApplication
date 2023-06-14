@@ -1,6 +1,7 @@
 package productExchanger;
 
 import java.util.Scanner;
+import java.util.Set;
 
 public class ProductExchangeController implements Controller{
     private ProductCodeContainer p;
@@ -9,6 +10,12 @@ public class ProductExchangeController implements Controller{
         initialize();
 
         ProductExchangeViewer.print(PEResultStatus.HELP);
+
+        if(checkProductCodeEmpty()){
+            ProductExchangeViewer.print(PEResultStatus.NO_PRODUCT_CODE);
+            System.exit(0);
+        }
+
         ProductExchangeViewer.print(p.getProductCodes());
 
         Scanner s = new Scanner(System.in);
@@ -31,7 +38,7 @@ public class ProductExchangeController implements Controller{
         }
     }
 
-    public static PEResultStatus processCommand(String[] command, ProductCodeContainer p){
+    protected PEResultStatus processCommand(String[] command, ProductCodeContainer p){
         PEResultStatus result;
 
         switch (command[PEInput.getCommandIndex()]) {
@@ -46,5 +53,10 @@ public class ProductExchangeController implements Controller{
 
     private void initialize(){
         p = new ProductCodeContainer();
+    }
+
+    private boolean checkProductCodeEmpty() {
+        Set<ProductCode> productCodes = p.getProductCodes();
+        return productCodes == null;
     }
 }

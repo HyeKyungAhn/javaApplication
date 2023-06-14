@@ -6,5 +6,6 @@ public enum PEResultStatus {
     EXCHANGEABLE_CODE,
     WRONG_INPUT,
     EXCHANGE_FAIL,
-    EXCHANGE_SUCCESS;
+    EXCHANGE_SUCCESS,
+    NO_PRODUCT_CODE,
 }
