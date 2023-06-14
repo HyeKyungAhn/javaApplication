@@ -7,7 +7,7 @@ public class ProductExchangeService {
         switch (command[PEInput.getCommandIndex()]) {
             case "check" -> result = check(command, p);
             case "help" -> result = PEResultStatus.HELP;
-//            case "claim" -> result = claim(command, p);
+            case "claim" -> result = claim(command, p);
             default -> result = PEResultStatus.WRONG_INPUT;
         }
 
@@ -21,5 +21,15 @@ public class ProductExchangeService {
             return PEResultStatus.EXCHANGEABLE_CODE;
         }
         return PEResultStatus.UNEXCHANGEABLE_CODE;
+    }
+
+    public static PEResultStatus claim(String[] command, ProductCodeContainer p){
+        String productCode = command[PEInput.CLAIM.getProductCodeIndex()];
+
+        if(p.isExchangeable(productCode)){
+            return p.exchange(command);
+        }
+
+        return PEResultStatus.EXCHANGE_FAIL;
     }
 }
