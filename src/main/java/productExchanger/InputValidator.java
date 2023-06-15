@@ -16,23 +16,23 @@ public class InputValidator {
         String command = inputs[PEInput.getCommandIndex()];
 
         switch (command){
-            case "check" -> result = (inputs.length == PEInput.CHECK.getLength()
-                    && isNumber(inputs[PEInput.CHECK.getProductCodeIndex()]));
+            case "check" : result = (inputs.length == PEInput.CHECK.getLength()
+                    && isNumber(inputs[PEInput.CHECK.getProductCodeIndex()])); break;
 
-            case "help" -> result = (inputs.length == PEInput.HELP.getLength());
+            case "help" : result = (inputs.length == PEInput.HELP.getLength()); break;
 
-            case "claim" -> result = (inputs.length == PEInput.CLAIM.getLength()
+            case "claim" : result = (inputs.length == PEInput.CLAIM.getLength()
                     && isEnglishLetter(inputs[PEInput.CLAIM.getStoreCodeIndex()])
-                    && isNumber(inputs[PEInput.CLAIM.getProductCodeIndex()]));
+                    && isNumber(inputs[PEInput.CLAIM.getProductCodeIndex()])); break;
 
-            default -> result = false;
+            default : result = false;
         }
 
         return result;
     }
 
     public static boolean isValidInputString(String input) {
-        return input.matches("^[a-zA-Z0-9\s]{0,"+TOTAL_INPUT_LENGTH+"}$"); //0~9, a~z, A~Z, space
+        return input.matches("^[a-zA-Z0-9\\s]{0,"+TOTAL_INPUT_LENGTH+"}$"); //0~9, a~z, A~Z, space
     }
 
     private static boolean isEnglishLetter(String storeCode){

@@ -20,7 +20,7 @@ public class PachinkoInputProcessor implements InputProcessor{
 
     @Override
     public boolean verifyInputValue(String input) {
-        return input.matches("^[a-zA-Z0-9\s]*$");//0~9, a~z, A~Z, space
+        return input.matches("^[a-zA-Z0-9\\s]*$");//0~9, a~z, A~Z, space
 
     }
 

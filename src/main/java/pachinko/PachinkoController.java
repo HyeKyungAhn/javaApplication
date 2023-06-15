@@ -60,16 +60,16 @@ public class PachinkoController implements Controller{
         String command = dividedInput[0];
 
         switch (command) {
-            case "balance" -> returnValue.put("balance", wallet.getBalance());
-            case "draw" -> {
+            case "balance" : returnValue.put("balance", wallet.getBalance()); break;
+            case "draw" : {
                 int drawNum = Integer.parseInt(dividedInput[1]);
                 returnValue.put("draw", drawService.draw(drawNum, LocalDateTime.now(), productContainer, user));
-            }
-            case "deposit" -> {
+            } break;
+            case "deposit" : {
                 int depositAmount = Integer.parseInt(dividedInput[1]);
                 returnValue.put("deposit", wallet.depositMoney(depositAmount));
-            }
-            default -> returnValue.put("wrong",null);
+            } break;
+            default : returnValue.put("wrong",null);
         }
 
         return returnValue;
