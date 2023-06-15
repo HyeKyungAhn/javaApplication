@@ -42,10 +42,10 @@ public class ProductExchangeController implements Controller{
         PEResultStatus result;
 
         switch (command[PEInput.getCommandIndex()]) {
-            case "check" -> result = ProductExchangeService.check(command, p);
-            case "help" -> result = ProductExchangeService.help();
-            case "claim" -> result = ProductExchangeService.claim(command, p);
-            default -> result = PEResultStatus.WRONG_INPUT;
+            case "check" : result = ProductExchangeService.check(command, p); break;
+            case "help" : result = ProductExchangeService.help(); break;
+            case "claim" : result = ProductExchangeService.claim(command, p); break;
+            default : result = PEResultStatus.WRONG_INPUT;
         }
 
         return result;

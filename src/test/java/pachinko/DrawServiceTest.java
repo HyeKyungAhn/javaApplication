@@ -132,13 +132,13 @@ public class DrawServiceTest {
             grade = product.getGrade();
 
             switch (grade) {
-                case "A" -> aGradeCount++;
-                case "B" -> {
+                case "A" : aGradeCount++; break;
+                case "B" : {
                     bGradeCount++;
                     assertTrue(bGradeCount <= 3);
-                }
-                case "" ->  //lose draw
-                        loseDrawCount++;
+                } break;
+                case "" :  //lose draw
+                        loseDrawCount++; break;
             }
         }
 

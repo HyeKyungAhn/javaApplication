@@ -33,10 +33,10 @@ public class DrawService {
                 }
 
             } else {
-                temp = null;
+                temp = new Product("", "", null);
             }
 
-            earnedProducts.add(Objects.requireNonNullElseGet(temp, () -> new Product("", "", null)));
+            earnedProducts.add(temp);
         }
 
         user.setbGradeDrawCount(drawBGradeCount);
